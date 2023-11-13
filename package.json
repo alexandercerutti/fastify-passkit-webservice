@@ -1,0 +1,19 @@
+{
+	"name": "passkit-fastify-router",
+	"version": "1.0.0",
+	"description": "",
+	"scripts": {
+		"build": "pnpm tsc"
+	},
+	"keywords": [],
+	"type": "module",
+	"author": "",
+	"license": "ISC",
+	"devDependencies": {
+		"prettier": "^3.1.0",
+		"typescript": "^5.2.2"
+	},
+	"peerDependencies": {
+		"fastify": "^4.24.3"
+	}
+}
