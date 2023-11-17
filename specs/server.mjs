@@ -134,10 +134,16 @@ fastifyInstance.register(import("../lib/plugins/list.js"), {
 	},
 });
 
-fastifyInstance.register(router, {
-	walletPasses: {
-		v1: {
-			update: true,
-		},
+fastifyInstance.register(import("../lib/plugins/update.js"), {
+	async onUpdateRequest(passTypeIdentifier, serialNumber) {
+		console.log("RECEIVED UPDATE REQUEST", passTypeIdentifier, serialNumber);
+
+		const pass = await createPass({
+			voided: true,
+			serialNumber,
+			passTypeIdentifier,
+		});
+
+		return pass.getAsBuffer();
 	},
 });
