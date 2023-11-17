@@ -90,10 +90,15 @@ const { PKPass } = passKit;
 
 debugger;
 
+fastifyInstance.register(import("../lib/plugins/log.js"), {
+	onIncomingLog(logs) {
+		console.log("RECEIVED LOGS:", logs);
+	},
+});
+
 fastifyInstance.register(router, {
 	walletPasses: {
 		v1: {
-			log: true,
 			register: true,
 			unregister: true,
 			listUpdatable: true,

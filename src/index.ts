@@ -68,19 +68,6 @@ const WALLET_PASSES_WEB_SERVICES_ROUTES_V1 = {
 		},
 	},
 	/**
-	 * @see https://developer.apple.com/documentation/walletpasses/log_a_message
-	 */
-	log: {
-		url: "/v1/log",
-		method: "POST",
-		prefixTrailingSlash: "no-slash",
-		handler(request, reply) {
-			console.log("HANDLING REQUEST", request.url);
-			reply.code(200);
-		},
-	},
-
-	/**
 	 * @see https://developer.apple.com/documentation/walletpasses/send_an_updated_pass
 	 */
 	update: {
@@ -134,13 +121,6 @@ interface RouterOptions {
 	walletPasses: {
 		v1: Record<WALLET_PASSES_WEB_SERVICES_V1, boolean>;
 	};
-}
-
-/**
- * @see https://developer.apple.com/documentation/walletpasses/logentries
- */
-interface LogEntries {
-	logs: string[];
 }
 
 function router(
