@@ -90,13 +90,13 @@ const { PKPass } = passKit;
 
 debugger;
 
-fastifyInstance.register(import("../lib/plugins/log.js"), {
+fastifyInstance.register(import("../lib/plugins/v1/log.js"), {
 	onIncomingLog(logs) {
 		console.log("RECEIVED LOGS:", logs);
 	},
 });
 
-fastifyInstance.register(import("../lib/plugins/registration.js"), {
+fastifyInstance.register(import("../lib/plugins/v1/registration.js"), {
 	onRegister(deviceLibraryIdentifier, passTypeIdentifier, serialNumber) {
 		console.log(
 			"RECEIVED REGISTER REQUEST",
@@ -115,7 +115,7 @@ fastifyInstance.register(import("../lib/plugins/registration.js"), {
 	},
 });
 
-fastifyInstance.register(import("../lib/plugins/list.js"), {
+fastifyInstance.register(import("../lib/plugins/v1/list.js"), {
 	async onListRetrieve(
 		deviceLibraryIdentifier,
 		passTypeIdentifier,
@@ -134,7 +134,7 @@ fastifyInstance.register(import("../lib/plugins/list.js"), {
 	},
 });
 
-fastifyInstance.register(import("../lib/plugins/update.js"), {
+fastifyInstance.register(import("../lib/plugins/v1/update.js"), {
 	async onUpdateRequest(passTypeIdentifier, serialNumber) {
 		console.log("RECEIVED UPDATE REQUEST", passTypeIdentifier, serialNumber);
 
