@@ -115,10 +115,28 @@ fastifyInstance.register(import("../lib/plugins/registration.js"), {
 	},
 });
 
+fastifyInstance.register(import("../lib/plugins/list.js"), {
+	async onListRetrieve(
+		deviceLibraryIdentifier,
+		passTypeIdentifier,
+		{ previousLastUpdated },
+	) {
+		console.log(
+			"RECEIVED LIST REQUEST",
+			deviceLibraryIdentifier,
+			passTypeIdentifier,
+			previousLastUpdated,
+		);
+
+		return Promise.resolve({
+			serialNumber: [],
+		});
+	},
+});
+
 fastifyInstance.register(router, {
 	walletPasses: {
 		v1: {
-			listUpdatable: true,
 			update: true,
 		},
 	},

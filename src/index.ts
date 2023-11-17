@@ -44,28 +44,6 @@ const WALLET_PASSES_WEB_SERVICES_ROUTES_V1 = {
 			reply.code(200);
 		},
 	},
-	/**
-	 * @see https://developer.apple.com/documentation/walletpasses/get_the_list_of_updatable_passes
-	 */
-	listUpdatable: {
-		url: "/v1/devices/:deviceLibraryIdentifier/registrations/:passTypeIdentifier",
-		method: "POST",
-		prefixTrailingSlash: "no-slash",
-		schema: {
-			querystring: {
-				passesUpdatedSince: { type: "string" },
-			},
-			params: {
-				deviceLibraryIdentifier: { type: "string" },
-				passTypeIdentifier: { type: "string" },
-				serialNumber: { type: "string" },
-			},
-		},
-		handler(request, reply) {
-			console.log("HANDLING REQUEST", request.url);
-			reply.code(200);
-		},
-	},
 } as const satisfies Readonly<{
 	[serviceName: string]: RouteOptions;
 }>;
