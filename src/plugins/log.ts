@@ -28,6 +28,17 @@ function logPlugin(
 		Body: LogEntries;
 	}>(`/v1/log`, {
 		prefixTrailingSlash: "no-slash",
+		schema: {
+			body: {
+				type: "object",
+				properties: {
+					logs: {
+						type: "array",
+						items: { type: "string" },
+					},
+				},
+			},
+		},
 		async handler(request, reply) {
 			opts.onIncomingLog(request.body.logs);
 
