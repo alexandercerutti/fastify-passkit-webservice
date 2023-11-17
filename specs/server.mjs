@@ -96,12 +96,30 @@ fastifyInstance.register(import("../lib/plugins/log.js"), {
 	},
 });
 
+fastifyInstance.register(import("../lib/plugins/registration.js"), {
+	onRegister(deviceLibraryIdentifier, passTypeIdentifier, serialNumber) {
+		console.log(
+			"RECEIVED REGISTER REQUEST",
+			deviceLibraryIdentifier,
+			passTypeIdentifier,
+			serialNumber,
+		);
+	},
+	onUnregister(deviceLibraryIdentifier, passTypeIdentifier, serialNumber) {
+		console.log(
+			"RECEIVED UN-REGISTER REQUEST",
+			deviceLibraryIdentifier,
+			passTypeIdentifier,
+			serialNumber,
+		);
+	},
+});
+
 fastifyInstance.register(router, {
 	walletPasses: {
 		v1: {
-			register: true,
-			unregister: true,
 			listUpdatable: true,
+			update: true,
 		},
 	},
 });

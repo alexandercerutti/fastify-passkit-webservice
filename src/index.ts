@@ -24,50 +24,6 @@ function getAuthorizationToken(request: FastifyRequest): string | undefined {
 
 const WALLET_PASSES_WEB_SERVICES_ROUTES_V1 = {
 	/**
-	 * @see https://developer.apple.com/documentation/walletpasses/register_a_pass_for_update_notifications
-	 */
-	register: {
-		url: "/v1/devices/:deviceLibraryIdentifier/registrations/:passTypeIdentifier/:serialNumber",
-		method: "POST",
-		prefixTrailingSlash: "no-slash",
-		schema: {
-			headers: {
-				Authorization: { type: "string" },
-			},
-			params: {
-				deviceLibraryIdentifier: { type: "string" },
-				passTypeIdentifier: { type: "string" },
-				serialNumber: { type: "string" },
-			},
-		},
-		handler(request, reply) {
-			console.log("HANDLING REQUEST", request.url);
-			reply.code(200);
-		},
-	},
-	/**
-	 * @see https://developer.apple.com/documentation/walletpasses/unregister_a_pass_for_update_notifications
-	 */
-	unregister: {
-		url: "/v1/devices/:deviceLibraryIdentifier/registrations/:passTypeIdentifier/:serialNumber",
-		method: "DELETE",
-		prefixTrailingSlash: "no-slash",
-		schema: {
-			headers: {
-				Authorization: { type: "string" },
-			},
-			params: {
-				deviceLibraryIdentifier: { type: "string" },
-				passTypeIdentifier: { type: "string" },
-				serialNumber: { type: "string" },
-			},
-		},
-		handler(request, reply) {
-			console.log("HANDLING REQUEST", request.url);
-			reply.code(200);
-		},
-	},
-	/**
 	 * @see https://developer.apple.com/documentation/walletpasses/send_an_updated_pass
 	 */
 	update: {
