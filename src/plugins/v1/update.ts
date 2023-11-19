@@ -9,7 +9,7 @@ import { checkAuthorizationSchemeHook } from "./hooks.js";
  * @see https://developer.apple.com/documentation/walletpasses/send_an_updated_pass
  */
 
-interface LogPluginOptions {
+interface UpdatePluginOptions {
 	onUpdateRequest(
 		passTypeIdentifier: string,
 		serialNumber: string,
@@ -18,7 +18,7 @@ interface LogPluginOptions {
 
 function updatePlugin(
 	fastify: FastifyInstance,
-	opts: LogPluginOptions,
+	opts: UpdatePluginOptions,
 	done: Parameters<FastifyPluginCallback>[2],
 ) {
 	if (typeof opts.onUpdateRequest !== "function") {
@@ -62,4 +62,4 @@ function updatePlugin(
 	done();
 }
 
-export default updatePlugin satisfies FastifyPluginCallback<LogPluginOptions>;
+export default updatePlugin satisfies FastifyPluginCallback<UpdatePluginOptions>;
