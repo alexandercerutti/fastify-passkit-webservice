@@ -1,15 +1,12 @@
-import { FastifyInstance, FastifyPluginCallback } from "fastify";
+import type { FastifyInstance, FastifyPluginCallback } from "fastify";
+import {
+	LogEndpoint,
+	type LogEntries,
+} from "passkit-webservice-toolkit/v1/log.js";
 
 /**
  * @see https://developer.apple.com/documentation/walletpasses/log_a_message
  */
-
-/**
- * @see https://developer.apple.com/documentation/walletpasses/logentries
- */
-interface LogEntries {
-	logs: string[];
-}
 
 interface LogPluginOptions {
 	onIncomingLog(logs: string[]): void;
@@ -26,7 +23,7 @@ function logPlugin(
 
 	fastify.post<{
 		Body: LogEntries;
-	}>(`/v1/log`, {
+	}>(LogEndpoint.path, {
 		prefixTrailingSlash: "no-slash",
 		schema: {
 			body: {

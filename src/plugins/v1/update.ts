@@ -1,4 +1,8 @@
-import { FastifyInstance, FastifyPluginCallback } from "fastify";
+import type { FastifyInstance, FastifyPluginCallback } from "fastify";
+import {
+	UpdateEndpoint,
+	type UpdateParams,
+} from "passkit-webservice-toolkit/v1/update.js";
 
 /**
  * @see https://developer.apple.com/documentation/walletpasses/send_an_updated_pass
@@ -21,11 +25,8 @@ function updatePlugin(
 	}
 
 	fastify.get<{
-		Params: {
-			passTypeIdentifier: string;
-			serialNumber: string;
-		};
-	}>("/v1/passes/:passTypeIdentifier/:serialNumber", {
+		Params: Record<UpdateParams[number], string>;
+	}>(UpdateEndpoint.path, {
 		prefixTrailingSlash: "no-slash",
 		schema: {
 			headers: {

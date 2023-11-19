@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+dependencies:
+  passkit-webservice-toolkit:
+    specifier: file:../passkit-webservice-toolkit
+    version: file:../passkit-webservice-toolkit
+
 devDependencies:
   fastify:
     specifier: ^4.24.3
@@ -464,7 +469,6 @@ packages:
 
   /tslib@2.6.2:
     resolution: {integrity: sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==}
-    dev: true
 
   /typescript@5.2.2:
     resolution: {integrity: sha512-mI4WrpHsbCIcwT9cF4FZvr80QUeKvsUsUvKDoR+X/7XHQH98xYD8YHZg7ANtz2GtZt/CBq2QJ0thkGJMHfqc1w==}
@@ -481,3 +485,10 @@ packages:
   /yallist@4.0.0:
     resolution: {integrity: sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A==}
     dev: true
+
+  file:../passkit-webservice-toolkit:
+    resolution: {directory: ../passkit-webservice-toolkit, type: directory}
+    name: passkit-webservice-toolkit
+    dependencies:
+      tslib: 2.6.2
+    dev: false

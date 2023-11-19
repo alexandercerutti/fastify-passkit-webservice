@@ -17,5 +17,8 @@
 	},
 	"peerDependencies": {
 		"fastify": "^4.24.3"
+	},
+	"dependencies": {
+		"passkit-webservice-toolkit": "file:../passkit-webservice-toolkit"
 	}
 }

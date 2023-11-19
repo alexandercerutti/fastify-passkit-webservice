@@ -1,27 +1,13 @@
 import { FastifyInstance, FastifyPluginCallback } from "fastify";
+import {
+	ListEndpoint,
+	type ListParams,
+	type SerialNumbers,
+} from "passkit-webservice-toolkit/v1/list.js";
 
 /**
  * @see https://developer.apple.com/documentation/walletpasses/get_the_list_of_updatable_passes
  */
-
-/**
- * @see https://developer.apple.com/documentation/walletpasses/serialnumbers
- */
-
-interface SerialNumbers {
-	serialNumbers: string[];
-
-	/**
-	 * A developer-defined string that contains a tag that
-	 * indicates the modification time for the returned passes.
-	 *
-	 * You use the value of this key for the `previousLastUpdated`
-	 * parameter of Get the List of Updatable Passes to return
-	 * passes modified after the represented date and time.
-	 */
-
-	lastUpdated: string;
-}
 
 interface ListPluginOptions<LastUpdatedFormat> {
 	onListRetrieve(
@@ -29,11 +15,6 @@ interface ListPluginOptions<LastUpdatedFormat> {
 		passTypeIdentifier: string,
 		filters: { previousLastUpdated?: LastUpdatedFormat },
 	): PromiseLike<SerialNumbers | undefined>;
-}
-
-interface ListPluginParams {
-	deviceLibraryIdentifier: string;
-	passTypeIdentifier: string;
 }
 
 function listPlugin<LastUpdatedFormat = unknown>(
@@ -46,11 +27,11 @@ function listPlugin<LastUpdatedFormat = unknown>(
 	}
 
 	fastify.post<{
-		Params: ListPluginParams;
+		Params: Record<ListParams[number], string>;
 		Querystring: {
 			previousLastUpdated?: LastUpdatedFormat;
 		};
-	}>("/v1/devices/:deviceLibraryIdentifier/registrations/:passTypeIdentifier", {
+	}>(ListEndpoint.path, {
 		prefixTrailingSlash: "no-slash",
 		schema: {
 			headers: {

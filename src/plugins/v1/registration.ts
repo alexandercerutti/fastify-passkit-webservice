@@ -1,4 +1,13 @@
-import { FastifyInstance, FastifyPluginCallback } from "fastify";
+import type { FastifyInstance, FastifyPluginCallback } from "fastify";
+import {
+	RegisterEndpoint,
+	type PushToken,
+	type RegisterParams,
+} from "passkit-webservice-toolkit/v1/register.js";
+import {
+	UnregisterEndpoint,
+	type UnregisterParams,
+} from "passkit-webservice-toolkit/v1/unregister.js";
 
 interface RegistrationPluginOptions {
 	/**
@@ -20,19 +29,6 @@ interface RegistrationPluginOptions {
 	): void;
 }
 
-interface RegistrationPluginParams {
-	deviceLibraryIdentifier: string;
-	passTypeIdentifier: string;
-	serialNumber: string;
-}
-
-/**
- * @see https://developer.apple.com/documentation/walletpasses/pushtoken
- */
-interface PushToken {
-	pushToken: string;
-}
-
 function registrationPlugin(
 	fastify: FastifyInstance,
 	opts: RegistrationPluginOptions,
@@ -48,79 +44,73 @@ function registrationPlugin(
 
 	fastify.post<{
 		Body: PushToken;
-		Params: RegistrationPluginParams;
-	}>(
-		"/v1/devices/:deviceLibraryIdentifier/registrations/:passTypeIdentifier/:serialNumber",
-		{
-			prefixTrailingSlash: "no-slash",
-			schema: {
-				headers: {
-					Authorization: { type: "string" },
-				},
-				params: {
-					deviceLibraryIdentifier: { type: "string" },
-					passTypeIdentifier: { type: "string" },
-					serialNumber: { type: "string" },
-				},
-				body: {
-					type: "object",
-					properties: {
-						pushToken: { type: "string" },
-					},
-				},
+		Params: Record<RegisterParams[number], string>;
+	}>(RegisterEndpoint.path, {
+		prefixTrailingSlash: "no-slash",
+		schema: {
+			headers: {
+				Authorization: { type: "string" },
 			},
-			async handler(request, reply) {
-				const { deviceLibraryIdentifier, passTypeIdentifier, serialNumber } =
-					request.params;
-
-				/**
-				 * @TODO make onRegister async
-				 */
-				opts.onRegister(
-					deviceLibraryIdentifier,
-					passTypeIdentifier,
-					serialNumber,
-				);
-
-				return reply.code(200);
+			params: {
+				deviceLibraryIdentifier: { type: "string" },
+				passTypeIdentifier: { type: "string" },
+				serialNumber: { type: "string" },
+			},
+			body: {
+				type: "object",
+				properties: {
+					pushToken: { type: "string" },
+				},
 			},
 		},
-	);
+		async handler(request, reply) {
+			const { deviceLibraryIdentifier, passTypeIdentifier, serialNumber } =
+				request.params;
+
+			/**
+			 * @TODO make onRegister async
+			 */
+			opts.onRegister(
+				deviceLibraryIdentifier,
+				passTypeIdentifier,
+				serialNumber,
+			);
+
+			return reply.code(200);
+		},
+	});
 
 	fastify.delete<{
 		Body: never;
-		Params: RegistrationPluginParams;
-	}>(
-		"/v1/devices/:deviceLibraryIdentifier/registrations/:passTypeIdentifier/:serialNumber",
-		{
-			prefixTrailingSlash: "no-slash",
-			schema: {
-				headers: {
-					Authorization: { type: "string" },
-				},
-				params: {
-					deviceLibraryIdentifier: { type: "string" },
-					passTypeIdentifier: { type: "string" },
-					serialNumber: { type: "string" },
-				},
+		Params: Record<UnregisterParams[number], string>;
+	}>(UnregisterEndpoint.path, {
+		prefixTrailingSlash: "no-slash",
+		schema: {
+			headers: {
+				Authorization: { type: "string" },
 			},
-			async handler(request, reply) {
-				const { deviceLibraryIdentifier, passTypeIdentifier, serialNumber } =
-					request.params;
-
-				/**
-				 * @TODO make onUnregister async
-				 */
-				opts.onUnregister(
-					deviceLibraryIdentifier,
-					passTypeIdentifier,
-					serialNumber,
-				);
-
-				return reply.code(200);
+			params: {
+				deviceLibraryIdentifier: { type: "string" },
+				passTypeIdentifier: { type: "string" },
+				serialNumber: { type: "string" },
 			},
 		},
-	);
+		async handler(request, reply) {
+			const { deviceLibraryIdentifier, passTypeIdentifier, serialNumber } =
+				request.params;
+
+			/**
+			 * @TODO make onUnregister async
+			 */
+			opts.onUnregister(
+				deviceLibraryIdentifier,
+				passTypeIdentifier,
+				serialNumber,
+			);
+
+			return reply.code(200);
+		},
+	});
 
 	done();
 }
