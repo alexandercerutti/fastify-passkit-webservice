@@ -3,6 +3,7 @@ import {
 	UpdateEndpoint,
 	type UpdateParams,
 } from "passkit-webservice-toolkit/v1/update.js";
+import { checkAuthorizationSchemeHook } from "./hooks.js";
 
 /**
  * @see https://developer.apple.com/documentation/walletpasses/send_an_updated_pass
@@ -44,6 +45,7 @@ function updatePlugin(
 				},
 			},
 		},
+		preHandler: checkAuthorizationSchemeHook,
 		async handler(request, reply) {
 			const { passTypeIdentifier, serialNumber } = request.params;
 

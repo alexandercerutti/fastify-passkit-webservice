@@ -8,6 +8,7 @@ import {
 	UnregisterEndpoint,
 	type UnregisterParams,
 } from "passkit-webservice-toolkit/v1/unregister.js";
+import { checkAuthorizationSchemeHook } from "./hooks.js";
 
 interface RegistrationPluginOptions {
 	/**
@@ -63,6 +64,7 @@ function registrationPlugin(
 				},
 			},
 		},
+		preHandler: checkAuthorizationSchemeHook,
 		async handler(request, reply) {
 			const { deviceLibraryIdentifier, passTypeIdentifier, serialNumber } =
 				request.params;
@@ -95,6 +97,7 @@ function registrationPlugin(
 				serialNumber: { type: "string" },
 			},
 		},
+		preHandler: checkAuthorizationSchemeHook,
 		async handler(request, reply) {
 			const { deviceLibraryIdentifier, passTypeIdentifier, serialNumber } =
 				request.params;
