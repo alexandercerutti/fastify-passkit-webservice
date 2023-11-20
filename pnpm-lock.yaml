@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   passkit-webservice-toolkit:
-    specifier: file:../passkit-webservice-toolkit
-    version: file:../passkit-webservice-toolkit
+    specifier: ^1.0.0
+    version: 1.0.0
 
 devDependencies:
   fastify:
@@ -313,6 +313,12 @@ packages:
       tslib: 2.6.2
     dev: true
 
+  /passkit-webservice-toolkit@1.0.0:
+    resolution: {integrity: sha512-dFh+N2McaK4t4LWN5ncMSJUPzELqmDdCc2Yhgv5CIU7GRfJL/ebFo1h6/bSEXfKkaufwZB/96YnF+Oq1dsqv8w==}
+    dependencies:
+      tslib: 2.6.2
+    dev: false
+
   /pino-abstract-transport@1.1.0:
     resolution: {integrity: sha512-lsleG3/2a/JIWUtf9Q5gUNErBqwIu1tUKTT3dUzaf5DySw9ra1wcqKjJjLX1VTY64Wk1eEOYsVGSaGfCK85ekA==}
     dependencies:
@@ -485,10 +491,3 @@ packages:
   /yallist@4.0.0:
     resolution: {integrity: sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A==}
     dev: true
-
-  file:../passkit-webservice-toolkit:
-    resolution: {directory: ../passkit-webservice-toolkit, type: directory}
-    name: passkit-webservice-toolkit
-    dependencies:
-      tslib: 2.6.2
-    dev: false

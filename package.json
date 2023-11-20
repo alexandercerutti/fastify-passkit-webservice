@@ -19,6 +19,6 @@
 		"fastify": "^4.24.3"
 	},
 	"dependencies": {
-		"passkit-webservice-toolkit": "file:../passkit-webservice-toolkit"
+		"passkit-webservice-toolkit": "^1.0.0"
 	}
 }
