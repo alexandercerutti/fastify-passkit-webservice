@@ -1,4 +1,9 @@
-import type { FastifyInstance, FastifyPluginCallback } from "fastify";
+import type {
+	FastifyInstance,
+	FastifyPluginCallback,
+	preHandlerAsyncHookHandler,
+	preHandlerHookHandler,
+} from "fastify";
 import {
 	RegisterEndpoint,
 	type PushToken,
@@ -8,9 +13,13 @@ import {
 	UnregisterEndpoint,
 	type UnregisterParams,
 } from "passkit-webservice-toolkit/v1/unregister.js";
-import { checkAuthorizationSchemeHook } from "./hooks.js";
+import {
+	checkAuthorizationSchemeHook,
+	createTokenVerifierHook,
+} from "./hooks.js";
 
 interface RegistrationPluginOptions {
+	tokenVerifier?(token: string): PromiseLike<boolean>;
 	/**
 	 * @see https://developer.apple.com/documentation/walletpasses/register_a_pass_for_update_notifications
 	 */
@@ -43,6 +52,15 @@ function registrationPlugin(
 		throw new Error("onUnregister is not a valid listener");
 	}
 
+	const preHandlerHooks: (
+		| preHandlerAsyncHookHandler
+		| preHandlerHookHandler
+	)[] = [checkAuthorizationSchemeHook];
+
+	if (typeof opts.tokenVerifier === "function") {
+		preHandlerHooks.push(createTokenVerifierHook(opts.tokenVerifier));
+	}
+
 	fastify.post<{
 		Body: PushToken;
 		Params: Record<RegisterParams[number], string>;
@@ -64,7 +82,7 @@ function registrationPlugin(
 				},
 			},
 		},
-		preHandler: checkAuthorizationSchemeHook,
+		preHandler: preHandlerHooks,
 		async handler(request, reply) {
 			const { deviceLibraryIdentifier, passTypeIdentifier, serialNumber } =
 				request.params;
@@ -97,7 +115,7 @@ function registrationPlugin(
 				serialNumber: { type: "string" },
 			},
 		},
-		preHandler: checkAuthorizationSchemeHook,
+		preHandler: preHandlerHooks,
 		async handler(request, reply) {
 			const { deviceLibraryIdentifier, passTypeIdentifier, serialNumber } =
 				request.params;

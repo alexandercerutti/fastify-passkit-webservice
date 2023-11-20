@@ -1,15 +1,24 @@
-import type { FastifyInstance, FastifyPluginCallback } from "fastify";
+import type {
+	FastifyInstance,
+	FastifyPluginCallback,
+	preHandlerAsyncHookHandler,
+	preHandlerHookHandler,
+} from "fastify";
 import {
 	UpdateEndpoint,
 	type UpdateParams,
 } from "passkit-webservice-toolkit/v1/update.js";
-import { checkAuthorizationSchemeHook } from "./hooks.js";
+import {
+	checkAuthorizationSchemeHook,
+	createTokenVerifierHook,
+} from "./hooks.js";
 
 /**
  * @see https://developer.apple.com/documentation/walletpasses/send_an_updated_pass
  */
 
 interface UpdatePluginOptions {
+	tokenVerifier?(token: string): PromiseLike<boolean>;
 	onUpdateRequest(
 		passTypeIdentifier: string,
 		serialNumber: string,
@@ -23,6 +32,15 @@ function updatePlugin(
 ) {
 	if (typeof opts.onUpdateRequest !== "function") {
 		throw new Error("onUpdateRequest is not a valid listener");
+	}
+
+	const preHandlerHooks: (
+		| preHandlerAsyncHookHandler
+		| preHandlerHookHandler
+	)[] = [checkAuthorizationSchemeHook];
+
+	if (typeof opts.tokenVerifier === "function") {
+		preHandlerHooks.push(createTokenVerifierHook(opts.tokenVerifier));
 	}
 
 	fastify.get<{
@@ -45,7 +63,7 @@ function updatePlugin(
 				},
 			},
 		},
-		preHandler: checkAuthorizationSchemeHook,
+		preHandler: preHandlerHooks,
 		async handler(request, reply) {
 			const { passTypeIdentifier, serialNumber } = request.params;
 
