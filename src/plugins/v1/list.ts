@@ -4,6 +4,7 @@ import {
 	type ListParams,
 	type SerialNumbers,
 } from "passkit-webservice-toolkit/v1/list.js";
+import { HandlerNotFoundError } from "../../HandlerNotFoundError.js";
 
 /**
  * @see https://developer.apple.com/documentation/walletpasses/get_the_list_of_updatable_passes
@@ -23,7 +24,7 @@ function listPlugin<LastUpdatedFormat = unknown>(
 	done: Parameters<FastifyPluginCallback>[2],
 ) {
 	if (typeof opts.onListRetrieve !== "function") {
-		throw new Error("onListRetrieve is not a valid listener");
+		throw new HandlerNotFoundError("onListRetrieve", "ListPlugin");
 	}
 
 	fastify.post<{

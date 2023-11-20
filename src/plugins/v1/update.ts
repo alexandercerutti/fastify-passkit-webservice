@@ -12,6 +12,7 @@ import {
 	checkAuthorizationSchemeHook,
 	createTokenVerifierHook,
 } from "./hooks.js";
+import { HandlerNotFoundError } from "../../HandlerNotFoundError.js";
 
 /**
  * @see https://developer.apple.com/documentation/walletpasses/send_an_updated_pass
@@ -31,7 +32,7 @@ function updatePlugin(
 	done: Parameters<FastifyPluginCallback>[2],
 ) {
 	if (typeof opts.onUpdateRequest !== "function") {
-		throw new Error("onUpdateRequest is not a valid listener");
+		throw new HandlerNotFoundError("onUpdateRequest", "UpdatePlugin");
 	}
 
 	const preHandlerHooks: (

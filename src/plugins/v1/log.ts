@@ -3,6 +3,7 @@ import {
 	LogEndpoint,
 	type LogEntries,
 } from "passkit-webservice-toolkit/v1/log.js";
+import { HandlerNotFoundError } from "../../HandlerNotFoundError.js";
 
 /**
  * @see https://developer.apple.com/documentation/walletpasses/log_a_message
@@ -18,7 +19,7 @@ function logPlugin(
 	done: Parameters<FastifyPluginCallback>[2],
 ) {
 	if (typeof opts.onIncomingLog !== "function") {
-		throw new Error("onIncomingLog is not a valid listener");
+		throw new HandlerNotFoundError("onIncomingLog", "LogPlugin");
 	}
 
 	fastify.post<{

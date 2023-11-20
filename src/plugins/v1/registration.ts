@@ -17,6 +17,7 @@ import {
 	checkAuthorizationSchemeHook,
 	createTokenVerifierHook,
 } from "./hooks.js";
+import { HandlerNotFoundError } from "../../HandlerNotFoundError.js";
 
 interface RegistrationPluginOptions {
 	tokenVerifier?(token: string): PromiseLike<boolean>;
@@ -49,11 +50,11 @@ function registrationPlugin(
 	done: Parameters<FastifyPluginCallback>[2],
 ) {
 	if (typeof opts.onRegister !== "function") {
-		throw new Error("onRegister is not a valid listener");
+		throw new HandlerNotFoundError("onRegister", "RegistrationPlugin");
 	}
 
 	if (typeof opts.onUnregister !== "function") {
-		throw new Error("onUnregister is not a valid listener");
+		throw new HandlerNotFoundError("onUnregister", "RegistrationPlugin");
 	}
 
 	const preHandlerHooks: (
