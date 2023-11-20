@@ -27,7 +27,7 @@ interface RegistrationPluginOptions {
 		deviceLibraryIdentifier: string,
 		passTypeIdentifier: string,
 		serialNumber: string,
-	): void;
+	): PromiseLike<void>;
 
 	/**
 	 * @see https://developer.apple.com/documentation/walletpasses/unregister_a_pass_for_update_notifications
@@ -36,7 +36,7 @@ interface RegistrationPluginOptions {
 		deviceLibraryIdentifier: string,
 		passTypeIdentifier: string,
 		serialNumber: string,
-	): void;
+	): PromiseLike<void>;
 }
 
 function registrationPlugin(
@@ -87,16 +87,13 @@ function registrationPlugin(
 			const { deviceLibraryIdentifier, passTypeIdentifier, serialNumber } =
 				request.params;
 
-			/**
-			 * @TODO make onRegister async
-			 */
-			opts.onRegister(
+			await opts.onRegister(
 				deviceLibraryIdentifier,
 				passTypeIdentifier,
 				serialNumber,
 			);
 
-			return reply.code(200);
+			return reply.code(200).send();
 		},
 	});
 
@@ -120,16 +117,13 @@ function registrationPlugin(
 			const { deviceLibraryIdentifier, passTypeIdentifier, serialNumber } =
 				request.params;
 
-			/**
-			 * @TODO make onUnregister async
-			 */
-			opts.onUnregister(
+			await opts.onUnregister(
 				deviceLibraryIdentifier,
 				passTypeIdentifier,
 				serialNumber,
 			);
 
-			return reply.code(200);
+			return reply.code(200).send();
 		},
 	});
 

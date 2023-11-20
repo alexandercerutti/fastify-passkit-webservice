@@ -75,8 +75,6 @@ function listPlugin<LastUpdatedFormat = unknown>(
 				filters,
 			);
 
-			debugger;
-
 			if (!retrieve) {
 				reply.code(204).send();
 				return;
