@@ -17,7 +17,7 @@ export function checkAuthorizationSchemeHook(
 	const { authorization = "" } = request.headers;
 
 	if (!isAuthorizationSchemeValid(authorization)) {
-		reply.code(403).send();
+		reply.code(401).send();
 		return;
 	}
 
@@ -37,7 +37,7 @@ export function createTokenVerifierHook(
 
 		if (!(await verifyToken(token))) {
 			console.warn("Token verification failed");
-			reply.code(403).send();
+			reply.code(401).send();
 			return;
 		}
 	};
