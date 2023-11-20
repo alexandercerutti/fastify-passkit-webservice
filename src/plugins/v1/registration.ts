@@ -21,13 +21,17 @@ import {
 interface RegistrationPluginOptions {
 	tokenVerifier?(token: string): PromiseLike<boolean>;
 	/**
+	 * Return `true` if the registration has been successful (HTTP 201)
+	 * Otherwise `false` to tell Apple the SN has been already registered
+	 * for the device (HTTP 200).
+	 *
 	 * @see https://developer.apple.com/documentation/walletpasses/register_a_pass_for_update_notifications
 	 */
 	onRegister(
 		deviceLibraryIdentifier: string,
 		passTypeIdentifier: string,
 		serialNumber: string,
-	): PromiseLike<void>;
+	): PromiseLike<boolean>;
 
 	/**
 	 * @see https://developer.apple.com/documentation/walletpasses/unregister_a_pass_for_update_notifications
@@ -87,13 +91,15 @@ function registrationPlugin(
 			const { deviceLibraryIdentifier, passTypeIdentifier, serialNumber } =
 				request.params;
 
-			await opts.onRegister(
-				deviceLibraryIdentifier,
-				passTypeIdentifier,
-				serialNumber,
+			const registrationSuccessful = Boolean(
+				await opts.onRegister(
+					deviceLibraryIdentifier,
+					passTypeIdentifier,
+					serialNumber,
+				),
 			);
 
-			return reply.code(200).send();
+			return reply.code(200 + Number(registrationSuccessful)).send();
 		},
 	});
 
