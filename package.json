@@ -3,7 +3,8 @@
 	"version": "1.0.0",
 	"description": "",
 	"scripts": {
-		"build": "pnpm tsc"
+		"build": "pnpm tsc",
+		"test": "node specs/index.mjs"
 	},
 	"keywords": [],
 	"type": "module",
