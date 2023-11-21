@@ -22,5 +22,10 @@
 	},
 	"dependencies": {
 		"passkit-webservice-toolkit": "^1.0.0"
+	},
+	"exports": {
+		".": "./lib/index.js",
+		"./v1": "./lib/plugins/v1/index.js",
+		"./v1/*": "./lib/plugins/v1/*"
 	}
 }
