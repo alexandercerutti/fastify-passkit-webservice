@@ -18,10 +18,9 @@ interface ListPluginOptions<LastUpdatedFormat> {
 	): PromiseLike<SerialNumbers | undefined>;
 }
 
-function listPlugin<LastUpdatedFormat = unknown>(
+async function listPlugin<LastUpdatedFormat = unknown>(
 	fastify: FastifyInstance,
 	opts: ListPluginOptions<LastUpdatedFormat>,
-	done: Parameters<FastifyPluginCallback>[2],
 ) {
 	if (typeof opts.onListRetrieve !== "function") {
 		throw new HandlerNotFoundError("onListRetrieve", "ListPlugin");
@@ -85,8 +84,6 @@ function listPlugin<LastUpdatedFormat = unknown>(
 			return reply.code(200).send(retrieve);
 		},
 	});
-
-	done();
 }
 
 export default listPlugin satisfies FastifyPluginCallback<

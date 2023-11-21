@@ -44,10 +44,9 @@ interface RegistrationPluginOptions {
 	): PromiseLike<void>;
 }
 
-function registrationPlugin(
+async function registrationPlugin(
 	fastify: FastifyInstance,
 	opts: RegistrationPluginOptions,
-	done: Parameters<FastifyPluginCallback>[2],
 ) {
 	if (typeof opts.onRegister !== "function") {
 		throw new HandlerNotFoundError("onRegister", "RegistrationPlugin");
@@ -133,8 +132,6 @@ function registrationPlugin(
 			return reply.code(200).send();
 		},
 	});
-
-	done();
 }
 
 export default registrationPlugin satisfies FastifyPluginCallback<RegistrationPluginOptions>;

@@ -13,11 +13,7 @@ interface LogPluginOptions {
 	onIncomingLog(logs: string[]): void;
 }
 
-function logPlugin(
-	fastify: FastifyInstance,
-	opts: LogPluginOptions,
-	done: Parameters<FastifyPluginCallback>[2],
-) {
+async function logPlugin(fastify: FastifyInstance, opts: LogPluginOptions) {
 	if (typeof opts.onIncomingLog !== "function") {
 		throw new HandlerNotFoundError("onIncomingLog", "LogPlugin");
 	}
@@ -43,8 +39,6 @@ function logPlugin(
 			return reply.code(200);
 		},
 	});
-
-	done();
 }
 
 export default logPlugin satisfies FastifyPluginCallback<LogPluginOptions>;

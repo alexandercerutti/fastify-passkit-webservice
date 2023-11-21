@@ -26,10 +26,9 @@ interface UpdatePluginOptions {
 	): PromiseLike<Uint8Array>;
 }
 
-function updatePlugin(
+async function updatePlugin(
 	fastify: FastifyInstance,
 	opts: UpdatePluginOptions,
-	done: Parameters<FastifyPluginCallback>[2],
 ) {
 	if (typeof opts.onUpdateRequest !== "function") {
 		throw new HandlerNotFoundError("onUpdateRequest", "UpdatePlugin");
@@ -77,8 +76,6 @@ function updatePlugin(
 			return reply.code(200).send(response);
 		},
 	});
-
-	done();
 }
 
 export default updatePlugin satisfies FastifyPluginCallback<UpdatePluginOptions>;
