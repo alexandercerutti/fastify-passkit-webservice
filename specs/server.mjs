@@ -1,5 +1,9 @@
 import Fastify from "fastify";
 import { networkInterfaces } from "node:os";
+import fs from "node:fs";
+
+import passKit from "passkit-generator";
+const { PKPass } = passKit;
 
 const IPV4Interfaces = {};
 
@@ -18,8 +22,6 @@ for (const [ifName, netIf] of Object.entries(networkInterfaces())) {
 	}
 }
 
-console.log(IPV4Interfaces);
-
 export const fastifyInstance = Fastify({
 	logger: true,
 });
@@ -28,7 +30,12 @@ fastifyInstance.get("/health", (_, reply) => {
 	return reply.code(200).send({ status: "OK" });
 });
 
-fastifyInstance.get("/testpass", async (_, reply) => {
+/**
+ * @param {object} modifications
+ * @return {Promise<passKit.PKPass>}
+ */
+
+async function createPass(modifications) {
 	const pass = await PKPass.from(
 		{
 			model: "../passkit-generator/examples/models/exampleBooking.pass",
@@ -50,6 +57,7 @@ fastifyInstance.get("/testpass", async (_, reply) => {
 			}:3500`,
 			authenticationToken: "mimmomimmoqgeqwyidukqq",
 			voided: false,
+			...modifications,
 		},
 	);
 
@@ -57,6 +65,12 @@ fastifyInstance.get("/testpass", async (_, reply) => {
 	pass.setExpirationDate(null);
 	pass.setRelevantDate(null);
 	pass.setLocations(null);
+
+	return pass;
+}
+
+fastifyInstance.get("/testpass", async (_, reply) => {
+	const pass = await createPass();
 
 	reply.header("Content-Type", pass.mimeType);
 	reply.header("Content-Disposition", `attachment; filename="pass.pkpass"`);
@@ -80,16 +94,6 @@ fastifyInstance.listen(
 	},
 );
 
-// ******
-
-import fs from "node:fs";
-import router from "../lib/index.js";
-import passKit from "passkit-generator";
-
-const { PKPass } = passKit;
-
-debugger;
-
 fastifyInstance.register(import("../lib/plugins/v1/log.js"), {
 	onIncomingLog(logs) {
 		console.log("RECEIVED LOGS:", logs);
@@ -104,6 +108,8 @@ fastifyInstance.register(import("../lib/plugins/v1/registration.js"), {
 			passTypeIdentifier,
 			serialNumber,
 		);
+
+		return true;
 	},
 	onUnregister(deviceLibraryIdentifier, passTypeIdentifier, serialNumber) {
 		console.log(
@@ -112,6 +118,10 @@ fastifyInstance.register(import("../lib/plugins/v1/registration.js"), {
 			passTypeIdentifier,
 			serialNumber,
 		);
+	},
+	async tokenVerifier(token) {
+		console.log("Verifying token", token);
+		return true;
 	},
 });
 
@@ -145,5 +155,9 @@ fastifyInstance.register(import("../lib/plugins/v1/update.js"), {
 		});
 
 		return pass.getAsBuffer();
+	},
+	async tokenVerifier(token) {
+		console.log("Verifying token", token);
+		return true;
 	},
 });

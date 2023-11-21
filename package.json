@@ -4,7 +4,8 @@
 	"description": "",
 	"scripts": {
 		"build": "rm -rf lib && pnpm tsc && pnpm test",
-		"test": "node specs/index.mjs"
+		"test": "node specs/index.mjs",
+		"run:server": "node specs/server.mjs"
 	},
 	"keywords": [],
 	"type": "module",
