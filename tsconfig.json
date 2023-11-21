@@ -6,6 +6,7 @@
 		"moduleResolution": "NodeNext",
 		"declaration": true,
 		"sourceMap": true,
+		// just for the watch mode
 		"outDir": "lib",
 		"importsNotUsedAsValues": "remove",
 		"newLine": "lf",
