@@ -3,8 +3,10 @@
 	"version": "1.0.0",
 	"description": "",
 	"scripts": {
-		"build": "rm -rf lib && pnpm tsc && pnpm test",
-		"test": "node specs/index.mjs",
+		"build": "rm -rf lib && pnpm tsc",
+		"test": "pnpm build && pnpm test:prepare && node --test && pnpm test:cleanup",
+		"test:prepare": "pnpm link .",
+		"test:cleanup": "pnpm unlink fastify-passkit-webservice",
 		"run:server": "node specs/server.mjs"
 	},
 	"keywords": [],
