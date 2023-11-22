@@ -10,11 +10,11 @@ import { HandlerNotFoundError } from "../../HandlerNotFoundError.js";
  */
 
 interface LogPluginOptions {
-	onIncomingLog(logs: string[]): void;
+	onIncomingLogs(logs: string[]): void;
 }
 
 async function logPlugin(fastify: FastifyInstance, opts: LogPluginOptions) {
-	if (typeof opts.onIncomingLog !== "function") {
+	if (typeof opts.onIncomingLogs !== "function") {
 		throw new HandlerNotFoundError("onIncomingLog", "LogPlugin");
 	}
 
@@ -34,7 +34,7 @@ async function logPlugin(fastify: FastifyInstance, opts: LogPluginOptions) {
 			},
 		},
 		async handler(request, reply) {
-			opts.onIncomingLog(request.body.logs);
+			opts.onIncomingLogs(request.body.logs);
 
 			return reply.code(200);
 		},
