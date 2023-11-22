@@ -1,6 +1,6 @@
 {
 	"name": "fastify-passkit-webservice",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"description": "",
 	"scripts": {
 		"build": "rm -rf lib && pnpm tsc",
