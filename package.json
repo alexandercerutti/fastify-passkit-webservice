@@ -23,7 +23,7 @@
 		"fastify": "^4.24.3"
 	},
 	"dependencies": {
-		"passkit-webservice-toolkit": "^1.0.0"
+		"passkit-webservice-toolkit": "^1.0.2"
 	},
 	"exports": {
 		".": "./lib/index.js",
