@@ -8,7 +8,7 @@
 		"test:prepare": "pnpm link .",
 		"test:cleanup": "pnpm unlink fastify-passkit-webservice",
 		"run:server": "node specs/server.mjs",
-		"prepublish": "pnpm run build"
+		"prepublish": "pnpm run test && pnpm run build"
 	},
 	"keywords": [],
 	"type": "module",
