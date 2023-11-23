@@ -4,7 +4,7 @@ Integrate Apple Wallet Web services in your current fastify integration.
 
 ## Architecture
 
-Fastify Passkit Webservice is, as the name says, wraps Apple Wallet specifications into a Fastify integration.
+Fastify Passkit Webservice, as the name says, wraps Apple Wallet specifications into a Fastify integration.
 
 It exposes a set of plugins that will let yourself to dedicate exclusively to the integration of the business logic.
 
