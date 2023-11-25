@@ -1,6 +1,6 @@
 import type {
 	FastifyInstance,
-	FastifyPluginCallback,
+	FastifyPluginAsync,
 	preHandlerAsyncHookHandler,
 	preHandlerHookHandler,
 } from "fastify";
@@ -134,4 +134,4 @@ async function registrationPlugin(
 	});
 }
 
-export default registrationPlugin satisfies FastifyPluginCallback<RegistrationPluginOptions>;
+export default registrationPlugin satisfies FastifyPluginAsync<RegistrationPluginOptions>;

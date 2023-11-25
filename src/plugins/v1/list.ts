@@ -1,4 +1,4 @@
-import { FastifyInstance, FastifyPluginCallback } from "fastify";
+import { FastifyInstance, FastifyPluginAsync } from "fastify";
 import {
 	ListEndpoint,
 	type ListParams,
@@ -86,6 +86,6 @@ async function listPlugin<LastUpdatedFormat = unknown>(
 	});
 }
 
-export default listPlugin satisfies FastifyPluginCallback<
+export default listPlugin satisfies FastifyPluginAsync<
 	ListPluginOptions<unknown>
 >;

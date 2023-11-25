@@ -1,6 +1,6 @@
 import type {
 	FastifyInstance,
-	FastifyPluginCallback,
+	FastifyPluginAsync,
 	preHandlerAsyncHookHandler,
 	preHandlerHookHandler,
 } from "fastify";
@@ -78,4 +78,4 @@ async function updatePlugin(
 	});
 }
 
-export default updatePlugin satisfies FastifyPluginCallback<UpdatePluginOptions>;
+export default updatePlugin satisfies FastifyPluginAsync<UpdatePluginOptions>;

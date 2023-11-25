@@ -1,4 +1,4 @@
-import type { FastifyInstance, FastifyPluginCallback } from "fastify";
+import type { FastifyInstance, FastifyPluginAsync } from "fastify";
 import {
 	LogEndpoint,
 	type LogEntries,
@@ -41,4 +41,4 @@ async function logPlugin(fastify: FastifyInstance, opts: LogPluginOptions) {
 	});
 }
 
-export default logPlugin satisfies FastifyPluginCallback<LogPluginOptions>;
+export default logPlugin satisfies FastifyPluginAsync<LogPluginOptions>;
