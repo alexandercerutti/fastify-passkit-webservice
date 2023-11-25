@@ -15,6 +15,7 @@
 	"author": "",
 	"license": "ISC",
 	"devDependencies": {
+		"@types/node": "^20.10.0",
 		"fastify": "^4.24.3",
 		"passkit-generator": "^3.1.11",
 		"prettier": "^3.1.0",

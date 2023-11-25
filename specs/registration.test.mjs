@@ -1,5 +1,3 @@
-// @ts-check
-
 import Fastify from "fastify";
 import { describe, it, beforeEach } from "node:test";
 import { strictEqual, rejects } from "node:assert";
@@ -28,7 +26,6 @@ describe("registration service", () => {
 
 		it("should import plugin from v1 entry point", async () => {
 			const { registrationPlugin } = await import(
-				/** this will give error when package itself is not linked through `pnpm test` */
 				"fastify-passkit-webservice/v1"
 			);
 
@@ -40,7 +37,6 @@ describe("registration service", () => {
 			const {
 				v1: { registrationPlugin },
 			} = await import(
-				/** this will give error when package itself is not linked through `pnpm test` */
 				"fastify-passkit-webservice"
 			);
 
