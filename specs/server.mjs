@@ -5,9 +5,17 @@ import fs from "node:fs";
 import passKit from "passkit-generator";
 const { PKPass } = passKit;
 
+/**
+ * @type {Record<string, { address: string }[]>}
+ */
+
 const IPV4Interfaces = {};
 
 for (const [ifName, netIf] of Object.entries(networkInterfaces())) {
+	if (!netIf?.length) {
+		continue;
+	}
+
 	for (let i = 0; i < netIf.length; i++) {
 		const netInterface = netIf[i];
 		const isIPv4 = netInterface.family == "IPv4";
@@ -31,7 +39,7 @@ fastifyInstance.get("/health", (_, reply) => {
 });
 
 /**
- * @param {object} modifications
+ * @param {object} [modifications]
  * @return {Promise<passKit.PKPass>}
  */
 
@@ -95,13 +103,17 @@ fastifyInstance.listen(
 );
 
 fastifyInstance.register(import("../lib/plugins/v1/log.js"), {
-	onIncomingLog(logs) {
+	/**
+	 * @param {string[]} logs
+	 */
+
+	onIncomingLogs(logs) {
 		console.log("RECEIVED LOGS:", logs);
 	},
 });
 
 fastifyInstance.register(import("../lib/plugins/v1/registration.js"), {
-	onRegister(deviceLibraryIdentifier, passTypeIdentifier, serialNumber) {
+	async onRegister(deviceLibraryIdentifier, passTypeIdentifier, serialNumber) {
 		console.log(
 			"RECEIVED REGISTER REQUEST",
 			deviceLibraryIdentifier,
@@ -111,7 +123,11 @@ fastifyInstance.register(import("../lib/plugins/v1/registration.js"), {
 
 		return true;
 	},
-	onUnregister(deviceLibraryIdentifier, passTypeIdentifier, serialNumber) {
+	async onUnregister(
+		deviceLibraryIdentifier,
+		passTypeIdentifier,
+		serialNumber,
+	) {
 		console.log(
 			"RECEIVED UN-REGISTER REQUEST",
 			deviceLibraryIdentifier,
@@ -138,9 +154,10 @@ fastifyInstance.register(import("../lib/plugins/v1/list.js"), {
 			previousLastUpdated,
 		);
 
-		return Promise.resolve({
-			serialNumber: [],
-		});
+		return {
+			serialNumbers: ["askdfgas"],
+			lastUpdated: "",
+		};
 	},
 });
 
