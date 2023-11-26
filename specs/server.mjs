@@ -145,13 +145,13 @@ fastifyInstance.register(import("../lib/plugins/v1/list.js"), {
 	async onListRetrieve(
 		deviceLibraryIdentifier,
 		passTypeIdentifier,
-		{ previousLastUpdated },
+		{ passesUpdatedSince },
 	) {
 		console.log(
 			"RECEIVED LIST REQUEST",
 			deviceLibraryIdentifier,
 			passTypeIdentifier,
-			previousLastUpdated,
+			passesUpdatedSince,
 		);
 
 		return {
