@@ -50,7 +50,7 @@ async function listPlugin<LastUpdatedFormat = unknown>(
 		),
 	];
 
-	fastify.post<{
+	fastify.get<{
 		Params: Record<ListParams[number], string>;
 		Querystring: {
 			previousLastUpdated?: LastUpdatedFormat;
@@ -58,9 +58,6 @@ async function listPlugin<LastUpdatedFormat = unknown>(
 	}>(ListEndpoint.path, {
 		prefixTrailingSlash: "no-slash",
 		schema: {
-			headers: {
-				Authorization: { type: "string" },
-			},
 			params: {
 				deviceLibraryIdentifier: { type: "string" },
 				passTypeIdentifier: { type: "string" },
