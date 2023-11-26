@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   passkit-webservice-toolkit:
-    specifier: ^1.0.2
-    version: 1.0.2
+    specifier: ^1.0.3
+    version: 1.0.3
 
 devDependencies:
   '@types/node':
@@ -322,8 +322,8 @@ packages:
       tslib: 2.6.2
     dev: true
 
-  /passkit-webservice-toolkit@1.0.2:
-    resolution: {integrity: sha512-MEIIU946/OvN4NiJOCIdSFKUDIHolX71SanvPnQSqXix+hhjTiGlAIrdwm3XYZhv2j5fuEvDlpx4GHMfAX7aYA==}
+  /passkit-webservice-toolkit@1.0.3:
+    resolution: {integrity: sha512-7mFxi8i5Cwo4KX2RQAzGc6c/yEVoDFbJF6XCsMm9H3uvn3MYMJAjzmsQFquSomICf4j4schNPDh5Fw1FH2CfVQ==}
     dependencies:
       tslib: 2.6.2
     dev: false
