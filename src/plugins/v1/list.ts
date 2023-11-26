@@ -20,7 +20,7 @@ interface ListPluginOptions<LastUpdatedFormat> {
 	onListRetrieve(
 		deviceLibraryIdentifier: string,
 		passTypeIdentifier: string,
-		filters: { previousLastUpdated?: LastUpdatedFormat },
+		filters: { passesUpdatedSince?: LastUpdatedFormat },
 	): PromiseLike<SerialNumbers | undefined>;
 }
 
@@ -53,7 +53,7 @@ async function listPlugin<LastUpdatedFormat = unknown>(
 	fastify.get<{
 		Params: Record<ListParams[number], string>;
 		Querystring: {
-			previousLastUpdated?: LastUpdatedFormat;
+			passesUpdatedSince?: LastUpdatedFormat;
 		};
 	}>(ListEndpoint.path, {
 		prefixTrailingSlash: "no-slash",
@@ -83,12 +83,12 @@ async function listPlugin<LastUpdatedFormat = unknown>(
 		onSend: onSendHooks,
 		async handler(request, reply) {
 			const { deviceLibraryIdentifier, passTypeIdentifier } = request.params;
-			const filters: { previousLastUpdated?: LastUpdatedFormat } = {
-				previousLastUpdated: undefined,
+			const filters: { passesUpdatedSince?: LastUpdatedFormat } = {
+				passesUpdatedSince: undefined,
 			};
 
-			if (request.query.previousLastUpdated) {
-				filters.previousLastUpdated = request.query.previousLastUpdated;
+			if (request.query.passesUpdatedSince) {
+				filters.passesUpdatedSince = request.query.passesUpdatedSince;
 			}
 
 			const retrieve = await opts.onListRetrieve(
