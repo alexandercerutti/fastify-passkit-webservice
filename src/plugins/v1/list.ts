@@ -11,6 +11,8 @@ import {
 } from "passkit-webservice-toolkit/v1/list.js";
 import { HandlerNotFoundError } from "../../HandlerNotFoundError.js";
 import { createResponsePayloadValidityCheckerHook } from "./hooks.js";
+import { Buffer } from "node:buffer";
+import { Stream } from "node:stream";
 
 /**
  * @see https://developer.apple.com/documentation/walletpasses/get_the_list_of_updatable_passes
