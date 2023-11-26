@@ -61,5 +61,7 @@ export function createResponsePayloadValidityCheckerHook(
 				`Unexpected outcoming payload type. Expected a '${expectedType}' but returning ${result}`,
 			);
 		}
+
+		return payload;
 	};
 }
