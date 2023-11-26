@@ -2,6 +2,7 @@ import type {
 	FastifyPluginCallback,
 	FastifyReply,
 	FastifyRequest,
+	onSendHookHandler,
 	preHandlerAsyncHookHandler,
 } from "fastify";
 import {
@@ -39,6 +40,25 @@ export function createTokenVerifierHook(
 			console.warn("Token verification failed");
 			reply.code(401).send();
 			return;
+		}
+	};
+}
+
+export function createResponsePayloadValidityCheckerHook(
+	expectedType: string,
+	predicate: (payload: unknown) => boolean,
+): onSendHookHandler<unknown> {
+	return async function payloadValidityCheckerHook<Payload>(
+		_: FastifyRequest,
+		__: FastifyReply,
+		payload: Payload,
+	) {
+		const result = predicate(payload);
+
+		if (!result) {
+			throw new Error(
+				`Unexpected outcoming payload type. Expected a '${expectedType}' but returning ${result}`,
+			);
 		}
 	};
 }

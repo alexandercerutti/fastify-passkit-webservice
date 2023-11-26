@@ -167,6 +167,38 @@ describe("update service", () => {
 		strictEqual(onUpdateRequestMock.mock.callCount(), 1);
 	});
 
+	it("handler should make return http 500 when it does not return an Uint8Array", async () => {
+		const onUpdateRequestMock = mock.fn(
+			/**
+			 * @param {string} passTypeIdentifier
+			 * @param {string} serialNumber
+			 * @return {Promise<Uint8Array>}
+			 */
+			// @ts-expect-error
+			async (passTypeIdentifier, serialNumber) => false,
+		);
+
+		await fastifyInstance.register(
+			import("fastify-passkit-webservice/v1/update.js"),
+			{
+				onUpdateRequest: onUpdateRequestMock,
+			},
+		);
+
+		const address = await startFastify(fastifyInstance);
+		const response = await fetch(`${address}${UPDATE_BASE_PATH}`, {
+			method: "GET",
+			headers: {
+				...BASE_HEADERS,
+				Authorization: "ApplePass 0000000000",
+			},
+		});
+
+		strictEqual(response.status, 500);
+		strictEqual(onUpdateRequestMock.mock.callCount(), 1);
+		strictEqual(await onUpdateRequestMock.mock.calls[0].result, false);
+	});
+
 	it("handlers should receive the arguments of the request path", async () => {
 		const onUpdateRequestMock = mock.fn(
 			/**

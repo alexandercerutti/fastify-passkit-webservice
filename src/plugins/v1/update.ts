@@ -1,6 +1,8 @@
 import type {
 	FastifyInstance,
 	FastifyPluginAsync,
+	onSendAsyncHookHandler,
+	onSendHookHandler,
 	preHandlerAsyncHookHandler,
 	preHandlerHookHandler,
 } from "fastify";
@@ -10,6 +12,7 @@ import {
 } from "passkit-webservice-toolkit/v1/update.js";
 import {
 	checkAuthorizationSchemeHook,
+	createResponsePayloadValidityCheckerHook,
 	createTokenVerifierHook,
 } from "./hooks.js";
 import { HandlerNotFoundError } from "../../HandlerNotFoundError.js";
@@ -43,6 +46,13 @@ async function updatePlugin(
 		preHandlerHooks.push(createTokenVerifierHook(opts.tokenVerifier));
 	}
 
+	const onSendHooks: (onSendAsyncHookHandler | onSendHookHandler)[] = [
+		createResponsePayloadValidityCheckerHook(
+			"Uint8Array",
+			(payload: unknown) => payload instanceof Uint8Array,
+		),
+	];
+
 	fastify.get<{
 		Params: Record<UpdateParams[number], string>;
 	}>(UpdateEndpoint.path, {
@@ -64,6 +74,7 @@ async function updatePlugin(
 			},
 		},
 		preHandler: preHandlerHooks,
+		onSend: onSendHooks,
 		async handler(request, reply) {
 			const { passTypeIdentifier, serialNumber } = request.params;
 

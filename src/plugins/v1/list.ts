@@ -1,10 +1,16 @@
-import { FastifyInstance, FastifyPluginAsync } from "fastify";
+import {
+	FastifyInstance,
+	FastifyPluginAsync,
+	onSendAsyncHookHandler,
+	onSendHookHandler,
+} from "fastify";
 import {
 	ListEndpoint,
 	type ListParams,
 	type SerialNumbers,
 } from "passkit-webservice-toolkit/v1/list.js";
 import { HandlerNotFoundError } from "../../HandlerNotFoundError.js";
+import { createResponsePayloadValidityCheckerHook } from "./hooks.js";
 
 /**
  * @see https://developer.apple.com/documentation/walletpasses/get_the_list_of_updatable_passes
@@ -25,6 +31,23 @@ async function listPlugin<LastUpdatedFormat = unknown>(
 	if (typeof opts.onListRetrieve !== "function") {
 		throw new HandlerNotFoundError("onListRetrieve", "ListPlugin");
 	}
+
+	const onSendHooks: (onSendAsyncHookHandler | onSendHookHandler)[] = [
+		createResponsePayloadValidityCheckerHook(
+			"{ serialNumbers: string[], lastUpdated: string; }",
+			(payload: unknown) => {
+				if (payload === null) {
+					return false;
+				}
+
+				if (payload === undefined) {
+					return true;
+				}
+
+				return typeof payload === "object" && "serialNumbers" in payload;
+			},
+		),
+	];
 
 	fastify.post<{
 		Params: Record<ListParams[number], string>;
@@ -59,6 +82,7 @@ async function listPlugin<LastUpdatedFormat = unknown>(
 				204: {},
 			},
 		},
+		onSend: onSendHooks,
 		async handler(request, reply) {
 			const { deviceLibraryIdentifier, passTypeIdentifier } = request.params;
 			const filters: { previousLastUpdated?: LastUpdatedFormat } = {
