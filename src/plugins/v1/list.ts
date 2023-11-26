@@ -35,16 +35,17 @@ async function listPlugin<LastUpdatedFormat = unknown>(
 	const onSendHooks: (onSendAsyncHookHandler | onSendHookHandler)[] = [
 		createResponsePayloadValidityCheckerHook(
 			"{ serialNumbers: string[], lastUpdated: string; }",
-			(payload: unknown) => {
-				if (payload === null) {
-					return false;
-				}
-
-				if (payload === undefined) {
+			(payload: unknown, statusCode: number) => {
+				if (statusCode === 204) {
 					return true;
 				}
 
-				return typeof payload === "object" && "serialNumbers" in payload;
+				if (Buffer.isBuffer(payload) || payload instanceof Stream.Stream) {
+					return false;
+				}
+
+				const payloadObj = JSON.parse(payload as string);
+				return "serialNumbers" in payloadObj;
 			},
 		),
 	];
@@ -105,7 +106,8 @@ async function listPlugin<LastUpdatedFormat = unknown>(
 			}
 
 			reply.header("Content-Type", "application/json");
-			return reply.code(200).send(retrieve);
+
+			return reply.code(200).send(JSON.stringify(retrieve));
 		},
 	});
 }
