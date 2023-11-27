@@ -1,5 +1,14 @@
 # Changelog
 
+### **1.2.0**
+
+**Changes**:
+
+- Added support to `undefined` return type from `onUpdateRequest` callback. When this will happen, an `HTTP 304 Not Modified` will be sent instead. When a pass is returned, instead, the header `last-modified` will be supplied to the response, with the current UTC time;
+- Added support to a new parameter `modifiedSinceTimestamp` in `onUpdateRequest` callback, containing the timestamp (number) of the provided request header `if-modified-since`. If the header is not available, it will be `undefined`;
+
+---
+
 ### **1.1.0**
 
 **Changes**:
