@@ -84,9 +84,11 @@ describe("update service", () => {
 			/**
 			 * @param {string} passTypeIdentifier
 			 * @param {string} serialNumber
+			 * @param {number} [modifiedSinceTimestamp]
 			 * @return {Promise<Uint8Array>}
 			 */
-			async (passTypeIdentifier, serialNumber) => new Uint8Array([]),
+			async (passTypeIdentifier, serialNumber, modifiedSinceTimestamp) =>
+				new Uint8Array([]),
 		);
 
 		await fastifyInstance.register(
@@ -111,9 +113,11 @@ describe("update service", () => {
 			/**
 			 * @param {string} passTypeIdentifier
 			 * @param {string} serialNumber
+			 * @param {number} [modifiedSinceTimestamp]
 			 * @return {Promise<Uint8Array>}
 			 */
-			async (passTypeIdentifier, serialNumber) => new Uint8Array([]),
+			async (passTypeIdentifier, serialNumber, modifiedSinceTimestamp) =>
+				new Uint8Array([]),
 		);
 
 		await fastifyInstance.register(
@@ -142,9 +146,11 @@ describe("update service", () => {
 			/**
 			 * @param {string} passTypeIdentifier
 			 * @param {string} serialNumber
+			 * @param {number} [modifiedSinceTimestamp]
 			 * @return {Promise<Uint8Array>}
 			 */
-			async (passTypeIdentifier, serialNumber) => new Uint8Array(),
+			async (passTypeIdentifier, serialNumber, modifiedSinceTimestamp) =>
+				new Uint8Array(),
 		);
 
 		await fastifyInstance.register(
@@ -167,15 +173,16 @@ describe("update service", () => {
 		strictEqual(onUpdateRequestMock.mock.callCount(), 1);
 	});
 
-	it("handler should make return http 500 when it does not return an Uint8Array", async () => {
+	it("handler should make return http 500 when it does not return an Uint8Array or undefined", async () => {
 		const onUpdateRequestMock = mock.fn(
 			/**
 			 * @param {string} passTypeIdentifier
 			 * @param {string} serialNumber
+			 * @param {number} [modifiedSinceTimestamp]
 			 * @return {Promise<Uint8Array>}
 			 */
 			// @ts-expect-error
-			async (passTypeIdentifier, serialNumber) => false,
+			async (passTypeIdentifier, serialNumber, modifiedSinceTimestamp) => false,
 		);
 
 		await fastifyInstance.register(
@@ -204,9 +211,11 @@ describe("update service", () => {
 			/**
 			 * @param {string} passTypeIdentifier
 			 * @param {string} serialNumber
+			 * @param {number} [modifiedSinceTimestamp]
 			 * @return {Promise<Uint8Array>}
 			 */
-			async (passTypeIdentifier, serialNumber) => new Uint8Array([]),
+			async (passTypeIdentifier, serialNumber, modifiedSinceTimestamp) =>
+				new Uint8Array([]),
 		);
 
 		await fastifyInstance.register(
@@ -236,6 +245,7 @@ describe("update service", () => {
 		deepStrictEqual(onUpdateRequestMock.mock.calls[0].arguments, [
 			"com.my.pass.test",
 			"763R2B67R76Q",
+			undefined,
 		]);
 	});
 });
