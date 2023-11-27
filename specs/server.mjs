@@ -39,11 +39,51 @@ fastifyInstance.get("/health", (_, reply) => {
 });
 
 /**
+ * @type {Record<string, string>}
+ */
+
+const AIRPORTS = {
+	VCE: "Venice Marco Polo Airport",
+	AMS: "Amsterdam Airport Schipol",
+	MUC: "Munich Airport",
+	FRA: "Frankfurt Airport",
+	LAX: "Los Angeles International Airport",
+	DXB: "Dubai International Airport",
+	IAD: "Dulles International Airport",
+	HND: "Haneda Airport",
+	LHR: "Heathrow Airport",
+	MEL: "Melbourne Airport",
+	ZRH: "Zurich Airport",
+};
+
+/**
+ * @param {string} [current]
+ * @returns {string}
+ */
+
+function getRandomAirport(current = "") {
+	const list = Object.keys(AIRPORTS);
+
+	let selected = current;
+
+	while (selected === current || !selected) {
+		selected = list[Math.floor(Math.random() * (list.length - 0 + 1) + 0)];
+	}
+
+	return selected;
+}
+
+let lastUpdate = Date.now();
+
+/**
  * @param {object} [modifications]
  * @return {Promise<passKit.PKPass>}
  */
 
-async function createPass(modifications) {
+async function createPass(
+	modifications,
+	serialNumber = String(Math.random() * 100),
+) {
 	const pass = await PKPass.from(
 		{
 			model: "../passkit-generator/examples/models/exampleBooking.pass",
@@ -59,7 +99,7 @@ async function createPass(modifications) {
 			},
 		},
 		{
-			serialNumber: String(Math.random() * 100),
+			serialNumber,
 			webServiceURL: `http://${
 				Object.entries(IPV4Interfaces)[0][1][0].address
 			}:3500`,
@@ -70,6 +110,23 @@ async function createPass(modifications) {
 	);
 
 	pass.transitType = "PKTransitTypeAir";
+
+	const departureAirport = getRandomAirport();
+	const arrivalAirport = getRandomAirport(departureAirport);
+
+	pass.primaryFields.push({
+		key: "Departure",
+		label: AIRPORTS[departureAirport],
+		value: departureAirport,
+	});
+
+	pass.primaryFields.push({
+		key: "Destination",
+		label: AIRPORTS[arrivalAirport],
+		value: arrivalAirport,
+		changeMessage: "Destination airport changed to %@",
+	});
+
 	pass.setExpirationDate(null);
 	pass.setRelevantDate(null);
 	pass.setLocations(null);
@@ -80,8 +137,11 @@ async function createPass(modifications) {
 fastifyInstance.get("/testpass", async (_, reply) => {
 	const pass = await createPass();
 
+	lastUpdate = Date.now();
+
 	reply.header("Content-Type", pass.mimeType);
 	reply.header("Content-Disposition", `attachment; filename="pass.pkpass"`);
+	reply.header("Last-Modified", new Date().toUTCString());
 	reply.code(200);
 	reply.send(pass.getAsBuffer());
 });
@@ -156,20 +216,40 @@ fastifyInstance.register(import("../lib/plugins/v1/list.js"), {
 
 		return {
 			serialNumbers: ["askdfgas"],
-			lastUpdated: "",
+			lastUpdated: `${Date.now()}`,
 		};
 	},
 });
 
 fastifyInstance.register(import("../lib/plugins/v1/update.js"), {
-	async onUpdateRequest(passTypeIdentifier, serialNumber) {
-		console.log("RECEIVED UPDATE REQUEST", passTypeIdentifier, serialNumber);
-
-		const pass = await createPass({
-			voided: true,
-			serialNumber,
+	async onUpdateRequest(
+		passTypeIdentifier,
+		serialNumber,
+		modifiedSinceTimestamp,
+	) {
+		console.log(
+			"RECEIVED UPDATE REQUEST",
 			passTypeIdentifier,
-		});
+			serialNumber,
+			modifiedSinceTimestamp,
+		);
+
+		if (modifiedSinceTimestamp) {
+			console.log(new Date(modifiedSinceTimestamp), new Date(lastUpdate));
+		}
+
+		if (modifiedSinceTimestamp && modifiedSinceTimestamp >= lastUpdate) {
+			console.log("modifiedSinceTimestamp >= lastUpdate");
+			return undefined;
+		}
+
+		const pass = await createPass(
+			{
+				voided: true,
+				passTypeIdentifier,
+			},
+			serialNumber,
+		);
 
 		return pass.getAsBuffer();
 	},
