@@ -23,10 +23,22 @@ import { HandlerNotFoundError } from "../../HandlerNotFoundError.js";
 
 interface UpdatePluginOptions {
 	tokenVerifier?(token: string): PromiseLike<boolean>;
+
+	/**
+	 * @param passTypeIdentifier
+	 * @param serialNumber
+	 * @param {number} [modifiedSinceTimestamp] A timestamp that is provided by Apple,
+	 * 		based on the the time the last successful (HTTP 200) update was provided
+	 *
+	 * @returns {Uint8Array | undefined} If _falsy_ is returned, the request will
+	 * 		be replied with HTTP 304 Not Modified.
+	 */
+
 	onUpdateRequest(
 		passTypeIdentifier: string,
 		serialNumber: string,
-	): PromiseLike<Uint8Array>;
+		modifiedSinceTimestamp?: number | undefined,
+	): PromiseLike<Uint8Array | undefined>;
 }
 
 async function updatePlugin(
@@ -49,7 +61,8 @@ async function updatePlugin(
 	const onSendHooks: (onSendAsyncHookHandler | onSendHookHandler)[] = [
 		createResponsePayloadValidityCheckerHook(
 			"Uint8Array",
-			(payload: unknown) => payload instanceof Uint8Array,
+			(payload: unknown) =>
+				payload === undefined || payload instanceof Uint8Array,
 		),
 	];
 
@@ -78,12 +91,25 @@ async function updatePlugin(
 		async handler(request, reply) {
 			const { passTypeIdentifier, serialNumber } = request.params;
 
+			const modifiedSinceTimestamp = request.headers["if-modified-since"]
+				? new Date(request.headers["if-modified-since"]).getTime()
+				: undefined;
+
 			const response = await opts.onUpdateRequest(
 				passTypeIdentifier,
 				serialNumber,
+				modifiedSinceTimestamp,
 			);
 
+			if (response === undefined) {
+				/**
+				 * @see https://developer.apple.com/library/archive/documentation/PassKit/Reference/PassKit_WebService/WebService.html#//apple_ref/doc/uid/TP40011988-CH0-SW6
+				 */
+				return reply.code(304).send();
+			}
+
 			reply.header("Content-Type", "application/vnd.apple.pkpass");
+			reply.header("last-modified", new Date().toUTCString());
 			return reply.code(200).send(response);
 		},
 	});
