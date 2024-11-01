@@ -1,5 +1,13 @@
 # Changelog
 
+### **1.3.0**
+
+**Changes**:
+
+- Added support to Fastify v5. This release makes makes it compatible with both v4 and v5;
+
+---
+
 ### **1.2.0**
 
 **Changes**:
