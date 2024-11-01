@@ -10,7 +10,7 @@ import {
 	getAuthorizationToken,
 } from "passkit-webservice-toolkit/v1/utils/auth.js";
 
-export function checkAuthorizationSchemeHook(
+export function checkAuthorizationSchemeValidationHook(
 	request: FastifyRequest,
 	reply: FastifyReply,
 	done: Parameters<FastifyPluginCallback>[2],

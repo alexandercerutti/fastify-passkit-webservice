@@ -11,7 +11,7 @@ import {
 	type UpdateParams,
 } from "passkit-webservice-toolkit/v1/update.js";
 import {
-	checkAuthorizationSchemeHook,
+	checkAuthorizationSchemeValidationHook,
 	createResponsePayloadValidityCheckerHook,
 	createTokenVerifierHook,
 } from "./hooks.js";
@@ -52,7 +52,7 @@ async function updatePlugin(
 	const preHandlerHooks: (
 		| preHandlerAsyncHookHandler
 		| preHandlerHookHandler
-	)[] = [checkAuthorizationSchemeHook];
+	)[] = [];
 
 	if (typeof opts.tokenVerifier === "function") {
 		preHandlerHooks.push(createTokenVerifierHook(opts.tokenVerifier));
@@ -72,20 +72,29 @@ async function updatePlugin(
 		prefixTrailingSlash: "no-slash",
 		schema: {
 			headers: {
-				Authorization: { type: "string" },
+				type: "object",
+				properties: {
+					authorization: { type: "string" },
+				},
 			},
 			params: {
-				passTypeIdentifier: { type: "string" },
-				serialNumber: { type: "string" },
+				type: "object",
+				properties: {
+					passTypeIdentifier: { type: "string" },
+					serialNumber: { type: "string" },
+				},
 			},
 			response: {
 				200: {
 					content: {
-						"application/vnd.apple.pkpass": {},
+						"application/vnd.apple.pkpass": {
+							schema: {},
+						},
 					},
 				},
 			},
 		},
+		preValidation: [checkAuthorizationSchemeValidationHook],
 		preHandler: preHandlerHooks,
 		onSend: onSendHooks,
 		async handler(request, reply) {

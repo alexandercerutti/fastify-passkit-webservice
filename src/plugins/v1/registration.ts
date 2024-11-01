@@ -14,7 +14,7 @@ import {
 	type UnregisterParams,
 } from "passkit-webservice-toolkit/v1/unregister.js";
 import {
-	checkAuthorizationSchemeHook,
+	checkAuthorizationSchemeValidationHook,
 	createTokenVerifierHook,
 } from "./hooks.js";
 import { HandlerNotFoundError } from "../../HandlerNotFoundError.js";
@@ -59,7 +59,7 @@ async function registrationPlugin(
 	const preHandlerHooks: (
 		| preHandlerAsyncHookHandler
 		| preHandlerHookHandler
-	)[] = [checkAuthorizationSchemeHook];
+	)[] = [];
 
 	if (typeof opts.tokenVerifier === "function") {
 		preHandlerHooks.push(createTokenVerifierHook(opts.tokenVerifier));
@@ -72,12 +72,19 @@ async function registrationPlugin(
 		prefixTrailingSlash: "no-slash",
 		schema: {
 			headers: {
-				Authorization: { type: "string" },
+				type: "object",
+				properties: {
+					authorization: { type: "string" },
+				},
+				required: ["authorization"],
 			},
 			params: {
-				deviceLibraryIdentifier: { type: "string" },
-				passTypeIdentifier: { type: "string" },
-				serialNumber: { type: "string" },
+				type: "object",
+				properties: {
+					deviceLibraryIdentifier: { type: "string" },
+					passTypeIdentifier: { type: "string" },
+					serialNumber: { type: "string" },
+				},
 			},
 			body: {
 				type: "object",
@@ -86,6 +93,7 @@ async function registrationPlugin(
 				},
 			},
 		},
+		preValidation: [checkAuthorizationSchemeValidationHook],
 		preHandler: preHandlerHooks,
 		async handler(request, reply) {
 			const { deviceLibraryIdentifier, passTypeIdentifier, serialNumber } =
@@ -110,14 +118,21 @@ async function registrationPlugin(
 		prefixTrailingSlash: "no-slash",
 		schema: {
 			headers: {
-				Authorization: { type: "string" },
+				type: "object",
+				properties: {
+					authorization: { type: "string" },
+				},
 			},
 			params: {
-				deviceLibraryIdentifier: { type: "string" },
-				passTypeIdentifier: { type: "string" },
-				serialNumber: { type: "string" },
+				type: "object",
+				properties: {
+					deviceLibraryIdentifier: { type: "string" },
+					passTypeIdentifier: { type: "string" },
+					serialNumber: { type: "string" },
+				},
 			},
 		},
+		preValidation: [checkAuthorizationSchemeValidationHook],
 		preHandler: preHandlerHooks,
 		async handler(request, reply) {
 			const { deviceLibraryIdentifier, passTypeIdentifier, serialNumber } =

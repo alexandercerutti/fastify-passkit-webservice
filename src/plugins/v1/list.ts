@@ -61,20 +61,33 @@ async function listPlugin<LastUpdatedFormat = unknown>(
 		prefixTrailingSlash: "no-slash",
 		schema: {
 			params: {
-				deviceLibraryIdentifier: { type: "string" },
-				passTypeIdentifier: { type: "string" },
+				type: "object",
+				properties: {
+					deviceLibraryIdentifier: { type: "string" },
+					passTypeIdentifier: { type: "string" },
+				},
+			},
+			querystring: {
+				type: "object",
+				properties: {
+					passesUpdatedSince: {
+						type: "string",
+					},
+				},
 			},
 			response: {
 				200: {
 					content: {
 						"application/json": {
-							type: "object",
-							properties: {
-								serialNumbers: {
-									type: "array",
-									items: { type: "string" },
+							schema: {
+								type: "object",
+								properties: {
+									serialNumbers: {
+										type: "array",
+										items: { type: "string" },
+									},
+									lastUpdated: { type: "string" },
 								},
-								lastUpdated: { type: "string" },
 							},
 						},
 					},
