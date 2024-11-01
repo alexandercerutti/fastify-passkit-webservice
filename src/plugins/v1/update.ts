@@ -1,6 +1,7 @@
 import type {
 	FastifyInstance,
 	FastifyPluginAsync,
+	FastifySchema,
 	onSendAsyncHookHandler,
 	onSendHookHandler,
 	preHandlerAsyncHookHandler,
@@ -41,6 +42,31 @@ interface UpdatePluginOptions {
 	): PromiseLike<Uint8Array | undefined>;
 }
 
+const schema: FastifySchema = {
+	headers: {
+		type: "object",
+		properties: {
+			authorization: { type: "string" },
+		},
+	},
+	params: {
+		type: "object",
+		properties: {
+			passTypeIdentifier: { type: "string" },
+			serialNumber: { type: "string" },
+		},
+	},
+	response: {
+		200: {
+			content: {
+				"application/vnd.apple.pkpass": {
+					schema: {},
+				},
+			},
+		},
+	},
+};
+
 async function updatePlugin(
 	fastify: FastifyInstance,
 	opts: UpdatePluginOptions,
@@ -70,30 +96,7 @@ async function updatePlugin(
 		Params: Record<UpdateParams[number], string>;
 	}>(UpdateEndpoint.path, {
 		prefixTrailingSlash: "no-slash",
-		schema: {
-			headers: {
-				type: "object",
-				properties: {
-					authorization: { type: "string" },
-				},
-			},
-			params: {
-				type: "object",
-				properties: {
-					passTypeIdentifier: { type: "string" },
-					serialNumber: { type: "string" },
-				},
-			},
-			response: {
-				200: {
-					content: {
-						"application/vnd.apple.pkpass": {
-							schema: {},
-						},
-					},
-				},
-			},
-		},
+		schema,
 		preValidation: [checkAuthorizationSchemeValidationHook],
 		preHandler: preHandlerHooks,
 		onSend: onSendHooks,

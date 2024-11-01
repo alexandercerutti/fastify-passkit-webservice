@@ -1,4 +1,8 @@
-import type { FastifyInstance, FastifyPluginAsync } from "fastify";
+import type {
+	FastifyInstance,
+	FastifyPluginAsync,
+	FastifySchema,
+} from "fastify";
 import {
 	LogEndpoint,
 	type LogEntries,
@@ -13,6 +17,18 @@ interface LogPluginOptions {
 	onIncomingLogs(logs: string[]): void;
 }
 
+const schema: FastifySchema = {
+	body: {
+		type: "object",
+		properties: {
+			logs: {
+				type: "array",
+				items: { type: "string" },
+			},
+		},
+	},
+};
+
 async function logPlugin(fastify: FastifyInstance, opts: LogPluginOptions) {
 	if (typeof opts.onIncomingLogs !== "function") {
 		throw new HandlerNotFoundError("onIncomingLog", "LogPlugin");
@@ -22,17 +38,7 @@ async function logPlugin(fastify: FastifyInstance, opts: LogPluginOptions) {
 		Body: LogEntries;
 	}>(LogEndpoint.path, {
 		prefixTrailingSlash: "no-slash",
-		schema: {
-			body: {
-				type: "object",
-				properties: {
-					logs: {
-						type: "array",
-						items: { type: "string" },
-					},
-				},
-			},
-		},
+		schema,
 		async handler(request, reply) {
 			opts.onIncomingLogs(request.body.logs);
 

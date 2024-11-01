@@ -1,6 +1,7 @@
-import {
+import type {
 	FastifyInstance,
 	FastifyPluginAsync,
+	FastifySchema,
 	onSendAsyncHookHandler,
 	onSendHookHandler,
 } from "fastify";
@@ -25,6 +26,43 @@ interface ListPluginOptions<LastUpdatedFormat> {
 		filters: { passesUpdatedSince?: LastUpdatedFormat },
 	): PromiseLike<SerialNumbers | undefined>;
 }
+
+const schema: FastifySchema = {
+	params: {
+		type: "object",
+		properties: {
+			deviceLibraryIdentifier: { type: "string" },
+			passTypeIdentifier: { type: "string" },
+		},
+	},
+	querystring: {
+		type: "object",
+		properties: {
+			passesUpdatedSince: {
+				type: "string",
+			},
+		},
+	},
+	response: {
+		200: {
+			content: {
+				"application/json": {
+					schema: {
+						type: "object",
+						properties: {
+							serialNumbers: {
+								type: "array",
+								items: { type: "string" },
+							},
+							lastUpdated: { type: "string" },
+						},
+					},
+				},
+			},
+		},
+		204: {},
+	},
+};
 
 async function listPlugin<LastUpdatedFormat = unknown>(
 	fastify: FastifyInstance,
@@ -59,42 +97,7 @@ async function listPlugin<LastUpdatedFormat = unknown>(
 		};
 	}>(ListEndpoint.path, {
 		prefixTrailingSlash: "no-slash",
-		schema: {
-			params: {
-				type: "object",
-				properties: {
-					deviceLibraryIdentifier: { type: "string" },
-					passTypeIdentifier: { type: "string" },
-				},
-			},
-			querystring: {
-				type: "object",
-				properties: {
-					passesUpdatedSince: {
-						type: "string",
-					},
-				},
-			},
-			response: {
-				200: {
-					content: {
-						"application/json": {
-							schema: {
-								type: "object",
-								properties: {
-									serialNumbers: {
-										type: "array",
-										items: { type: "string" },
-									},
-									lastUpdated: { type: "string" },
-								},
-							},
-						},
-					},
-				},
-				204: {},
-			},
-		},
+		schema,
 		onSend: onSendHooks,
 		async handler(request, reply) {
 			const { deviceLibraryIdentifier, passTypeIdentifier } = request.params;

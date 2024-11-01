@@ -1,6 +1,7 @@
 import type {
 	FastifyInstance,
 	FastifyPluginAsync,
+	FastifySchema,
 	preHandlerAsyncHookHandler,
 	preHandlerHookHandler,
 } from "fastify";
@@ -44,6 +45,47 @@ interface RegistrationPluginOptions {
 	): PromiseLike<void>;
 }
 
+const postSchema: FastifySchema = {
+	headers: {
+		type: "object",
+		properties: {
+			authorization: { type: "string" },
+		},
+		required: ["authorization"],
+	},
+	params: {
+		type: "object",
+		properties: {
+			deviceLibraryIdentifier: { type: "string" },
+			passTypeIdentifier: { type: "string" },
+			serialNumber: { type: "string" },
+		},
+	},
+	body: {
+		type: "object",
+		properties: {
+			pushToken: { type: "string" },
+		},
+	},
+};
+
+const deleteSchema: FastifySchema = {
+	headers: {
+		type: "object",
+		properties: {
+			authorization: { type: "string" },
+		},
+	},
+	params: {
+		type: "object",
+		properties: {
+			deviceLibraryIdentifier: { type: "string" },
+			passTypeIdentifier: { type: "string" },
+			serialNumber: { type: "string" },
+		},
+	},
+};
+
 async function registrationPlugin(
 	fastify: FastifyInstance,
 	opts: RegistrationPluginOptions,
@@ -70,29 +112,7 @@ async function registrationPlugin(
 		Params: Record<RegisterParams[number], string>;
 	}>(RegisterEndpoint.path, {
 		prefixTrailingSlash: "no-slash",
-		schema: {
-			headers: {
-				type: "object",
-				properties: {
-					authorization: { type: "string" },
-				},
-				required: ["authorization"],
-			},
-			params: {
-				type: "object",
-				properties: {
-					deviceLibraryIdentifier: { type: "string" },
-					passTypeIdentifier: { type: "string" },
-					serialNumber: { type: "string" },
-				},
-			},
-			body: {
-				type: "object",
-				properties: {
-					pushToken: { type: "string" },
-				},
-			},
-		},
+		schema: postSchema,
 		preValidation: [checkAuthorizationSchemeValidationHook],
 		preHandler: preHandlerHooks,
 		async handler(request, reply) {
@@ -116,22 +136,7 @@ async function registrationPlugin(
 		Params: Record<UnregisterParams[number], string>;
 	}>(UnregisterEndpoint.path, {
 		prefixTrailingSlash: "no-slash",
-		schema: {
-			headers: {
-				type: "object",
-				properties: {
-					authorization: { type: "string" },
-				},
-			},
-			params: {
-				type: "object",
-				properties: {
-					deviceLibraryIdentifier: { type: "string" },
-					passTypeIdentifier: { type: "string" },
-					serialNumber: { type: "string" },
-				},
-			},
-		},
+		schema: deleteSchema,
 		preValidation: [checkAuthorizationSchemeValidationHook],
 		preHandler: preHandlerHooks,
 		async handler(request, reply) {
