@@ -1,5 +1,3 @@
-// @ts-check
-
 import Fastify from "fastify";
 import { describe, it, beforeEach, mock, afterEach } from "node:test";
 import { strictEqual, rejects, deepStrictEqual } from "node:assert";
@@ -69,6 +67,7 @@ describe("list service", () => {
 	it("should throw an error if the handler is not provided", async () => {
 		await rejects(
 			async () => {
+				// @ts-expect-error
 				await fastifyInstance.register(import("../lib/plugins/v1/list.js"));
 			},
 			(/** @type {HandlerNotFoundError} */ err) => {

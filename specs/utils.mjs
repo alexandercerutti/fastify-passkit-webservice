@@ -5,7 +5,12 @@
 
 export async function startFastify(instance) {
 	return new Promise((resolve) => {
-		instance.listen({ port: 0, host: "localhost" }, (err, address) => {
+		instance.listen({ port: 0 }, (err, address) => {
+			if (err) {
+				console.log("Error while starting up fastify:", err);
+				return;
+			}
+
 			resolve(address);
 		});
 	});

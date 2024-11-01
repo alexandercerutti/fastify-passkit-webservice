@@ -1,5 +1,3 @@
-// @ts-check
-
 import Fastify from "fastify";
 import { describe, it, beforeEach, afterEach, mock } from "node:test";
 import { strictEqual, rejects, deepStrictEqual } from "node:assert";
@@ -70,6 +68,7 @@ describe("update service", () => {
 	it("should throw an error if the handler is not provided", async () => {
 		await rejects(
 			async () => {
+				// @ts-expect-error
 				await fastifyInstance.register(import("../lib/plugins/v1/update.js"));
 			},
 			(/** @type {HandlerNotFoundError} */ err) => {
@@ -133,7 +132,7 @@ describe("update service", () => {
 			method: "GET",
 			headers: {
 				...BASE_HEADERS,
-				Authorization: "ApplePass 0000000000",
+				authorization: "ApplePass 0000000000",
 			},
 		});
 
@@ -165,7 +164,7 @@ describe("update service", () => {
 			method: "GET",
 			headers: {
 				...BASE_HEADERS,
-				Authorization: "ApplePass 0000000000",
+				authorization: "ApplePass 0000000000",
 			},
 		});
 
@@ -197,7 +196,7 @@ describe("update service", () => {
 			method: "GET",
 			headers: {
 				...BASE_HEADERS,
-				Authorization: "ApplePass 0000000000",
+				authorization: "ApplePass 0000000000",
 			},
 		});
 
@@ -236,7 +235,7 @@ describe("update service", () => {
 			method: "GET",
 			headers: {
 				...BASE_HEADERS,
-				Authorization: "ApplePass 0000000000",
+				authorization: "ApplePass 0000000000",
 			},
 		});
 

@@ -65,6 +65,7 @@ describe("registration service", () => {
 		await rejects(
 			async () => {
 				await fastifyInstance.register(
+					// @ts-expect-error
 					import("../lib/plugins/v1/registration.js"),
 				);
 			},
@@ -108,6 +109,9 @@ describe("registration service", () => {
 		const response = await Promise.all([
 			fetch(`${address}${REGISTER_BASE_PATH}`, {
 				method: "POST",
+				/**
+				 * `authorization` header missing on purpose
+				 */
 				headers: BASE_HEADERS,
 				body: JSON.stringify({
 					pushToken: "000000000",
@@ -115,7 +119,9 @@ describe("registration service", () => {
 			}),
 			fetch(`${address}${UNREGISTER_BASE_PATH}`, {
 				method: "DELETE",
-				headers: BASE_HEADERS,
+				/**
+				 * `authorization` header missing on purpose
+				 */
 			}),
 		]);
 
@@ -159,7 +165,7 @@ describe("registration service", () => {
 			method: "POST",
 			headers: {
 				...BASE_HEADERS,
-				Authorization: "ApplePass 0000000000",
+				authorization: "ApplePass 0000000000",
 			},
 			body: JSON.stringify({
 				pushToken: "000000000",
@@ -204,7 +210,7 @@ describe("registration service", () => {
 			method: "POST",
 			headers: {
 				...BASE_HEADERS,
-				Authorization: "ApplePass 0000000000",
+				authorization: "ApplePass 0000000000",
 			},
 			body: JSON.stringify({
 				pushToken: "000000000",
@@ -250,7 +256,7 @@ describe("registration service", () => {
 				method: "POST",
 				headers: {
 					...BASE_HEADERS,
-					Authorization: "ApplePass 0000000000",
+					authorization: "ApplePass 0000000000",
 				},
 				body: JSON.stringify({
 					pushToken: "000000000",
@@ -259,8 +265,7 @@ describe("registration service", () => {
 			fetch(`${address}${UNREGISTER_BASE_PATH}`, {
 				method: "DELETE",
 				headers: {
-					...BASE_HEADERS,
-					Authorization: "ApplePass 0000000000",
+					authorization: "ApplePass 0000000000",
 				},
 			}),
 		]);
@@ -320,7 +325,7 @@ describe("registration service", () => {
 				method: "POST",
 				headers: {
 					...BASE_HEADERS,
-					Authorization: "ApplePass 0000000000",
+					authorization: "ApplePass 0000000000",
 				},
 				body: JSON.stringify({
 					pushToken: "000000000",
@@ -329,8 +334,7 @@ describe("registration service", () => {
 			fetch(`${address}${UNREGISTER_BASE_PATH_WITH_PARAMS}`, {
 				method: "DELETE",
 				headers: {
-					...BASE_HEADERS,
-					Authorization: "ApplePass 0000000000",
+					authorization: "ApplePass 0000000000",
 				},
 			}),
 		]);
