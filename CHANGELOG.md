@@ -1,10 +1,18 @@
 # Changelog
 
+### **1.4.0**
+
+**Changes**:
+
+- Added support to `pushToken` as a parameter for `onRegister` callback;
+
+---
+
 ### **1.3.0**
 
 **Changes**:
 
-- Added support to Fastify v5. This release makes makes it compatible with both v4 and v5;
+- Added support to Fastify v5. This release makes it compatible with both v4 and v5;
 
 ---
 
