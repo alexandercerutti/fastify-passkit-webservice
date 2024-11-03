@@ -24,6 +24,6 @@ $ npm install fastify-passkit-webservice
 
 ## API Documentation
 
-All the exposed informations are detailed in the Wiki.
+All the details are available in the dedicated project [wiki page](https://github.com/alexandercerutti/fastify-passkit-webservice/wiki/API-Documentation-Reference).
 
 ---
