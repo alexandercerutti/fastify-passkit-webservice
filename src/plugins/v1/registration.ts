@@ -33,6 +33,7 @@ interface RegistrationPluginOptions {
 		deviceLibraryIdentifier: string,
 		passTypeIdentifier: string,
 		serialNumber: string,
+		pushToken: string,
 	): PromiseLike<boolean>;
 
 	/**
@@ -119,11 +120,14 @@ async function registrationPlugin(
 			const { deviceLibraryIdentifier, passTypeIdentifier, serialNumber } =
 				request.params;
 
+			const { pushToken } = request.body;
+
 			const registrationSuccessful = Boolean(
 				await opts.onRegister(
 					deviceLibraryIdentifier,
 					passTypeIdentifier,
 					serialNumber,
+					pushToken,
 				),
 			);
 

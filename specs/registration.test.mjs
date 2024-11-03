@@ -345,6 +345,7 @@ describe("registration service", () => {
 			"hkweagjdyjukhiljsadck",
 			"com.my.pass.test",
 			"763R2B67R76Q",
+			"000000000",
 		]);
 
 		strictEqual(response[1].status, 200);
