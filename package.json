@@ -4,6 +4,7 @@
 	"description": "",
 	"scripts": {
 		"build": "rm -rf lib && pnpm tsc",
+		"lint": "pnpm prettier . --write",
 		"test": "pnpm build && pnpm test:prepare && node --test && pnpm test:cleanup",
 		"test:prepare": "pnpm link .",
 		"test:cleanup": "pnpm unlink fastify-passkit-webservice",
