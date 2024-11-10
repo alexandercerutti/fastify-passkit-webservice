@@ -19,16 +19,7 @@ on:
 # and changed to use pnpm first
 
 jobs:
-  setup_pnpm:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9
-
   dependency-review:
-    needs: [setup_pnpm]
     name: Dependency Review
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
@@ -46,13 +37,16 @@ jobs:
   license-check:
     if: >
       !failure() &&
-      !cancelled() &&
-      inputs.license-check == true
+      !cancelled()
     name: Check Licenses
     runs-on: ubuntu-latest
     permissions:
       contents: read
     steps:
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
@@ -63,22 +57,24 @@ jobs:
           node-version: lts/*
 
       - name: Install dependencies
-        run: npm i --ignore-scripts
+        run: pnpm i --ignore-scripts
 
       - name: Check Licenses
-        run: ${{ format('npx license-checker --production --summary --onlyAllow="0BSD;Apache-2.0;BlueOak-1.0.0;BSD-2-Clause;BSD-3-Clause;ISC;MIT;{0}"', inputs.license-check-allowed-additional) }}
+        run: ${{ format('pnpm dlx license-checker --production --summary --onlyAllow="0BSD;Apache-2.0;BlueOak-1.0.0;BSD-2-Clause;BSD-3-Clause;ISC;MIT;{0}"', inputs.license-check-allowed-additional) }}
 
   linter:
-    needs: [setup_pnpm]
     name: Lint Code
     if: >
       !failure() &&
       !cancelled() &&
-      inputs.lint == true
     runs-on: ubuntu-latest
     permissions:
       contents: read
     steps:
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
       - name: Check out repo
         uses: actions/checkout@v4
         with:
@@ -96,14 +92,13 @@ jobs:
         run: pnpm lint
 
   test:
-    needs: [setup_pnpm]
     name: Test
     runs-on: ${{ matrix.os }}
     permissions:
       contents: read
     strategy:
       matrix:
-        node-version: ${{ fromJson(inputs.node-versions) }}
+        node-version: ${{ fromJson('["20", "22"]') }}
         os: [macos-latest, ubuntu-latest, windows-latest]
         exclude:
           - os: macos-latest
@@ -111,6 +106,10 @@ jobs:
           - os: macos-latest
             node-version: 16
     steps:
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
       - name: Check out repo
         uses: actions/checkout@v4
         with:
@@ -128,16 +127,18 @@ jobs:
         run: pnpm test
 
   fastify-dependency-integration:
-    needs: [setup_pnpm]
     name: Test Fastify Integration
     runs-on: ubuntu-latest
     if: >
       !failure() &&
       !cancelled() &&
-      inputs.fastify-dependency-integration == true
     permissions:
       contents: read
     steps:
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
       - name: Check out repo
         uses: actions/checkout@v4
         with:
