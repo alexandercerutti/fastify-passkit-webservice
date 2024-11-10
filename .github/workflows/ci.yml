@@ -154,7 +154,7 @@ jobs:
 
       - name: Test Fastify Integration
         run: |
-          npm link . &&
+          npm link &&
           PACKAGE_NAME=$(node -p "require('./package.json').name")
           git clone https://github.com/fastify/fastify.git --depth 1 &&
           cd fastify &&
