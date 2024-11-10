@@ -20,6 +20,7 @@ on:
 
 jobs:
   setup_pnpm:
+    runs-on: ubuntu-latest
     steps:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
