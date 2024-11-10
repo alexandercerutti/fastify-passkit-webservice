@@ -15,18 +15,147 @@ on:
       - "docs/**"
       - "*.md"
 
+# Jobs got from https://github.com/fastify/workflows/blob/main/.github/workflows/plugins-ci.yml
+# and changed to use pnpm first
+
 jobs:
   setup_pnpm:
-    runs-on: ubuntu-latest
     steps:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 9
 
+  dependency-review:
+    needs: [setup_pnpm]
+    name: Dependency Review
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Dependency review
+        uses: actions/dependency-review-action@v4
+
+  license-check:
+    if: >
+      !failure() &&
+      !cancelled() &&
+      inputs.license-check == true
+    name: Check Licenses
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Install dependencies
+        run: npm i --ignore-scripts
+
+      - name: Check Licenses
+        run: ${{ format('npx license-checker --production --summary --onlyAllow="0BSD;Apache-2.0;BlueOak-1.0.0;BSD-2-Clause;BSD-3-Clause;ISC;MIT;{0}"', inputs.license-check-allowed-additional) }}
+
+  linter:
+    needs: [setup_pnpm]
+    name: Lint Code
+    if: >
+      !failure() &&
+      !cancelled() &&
+      inputs.lint == true
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Install dependencies
+        run: pnpm i --ignore-scripts
+
+      - name: Lint code
+        run: pnpm lint
+
   test:
     needs: [setup_pnpm]
-    uses: fastify/workflows/.github/workflows/plugins-ci.yml@v5
-    with:
-      license-check: true
-      lint: true
+    name: Test
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+    strategy:
+      matrix:
+        node-version: ${{ fromJson(inputs.node-versions) }}
+        os: [macos-latest, ubuntu-latest, windows-latest]
+        exclude:
+          - os: macos-latest
+            node-version: 14
+          - os: macos-latest
+            node-version: 16
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup Node ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        run: pnpm i --ignore-scripts
+
+      - name: Run tests
+        run: pnpm test
+
+  fastify-dependency-integration:
+    needs: [setup_pnpm]
+    name: Test Fastify Integration
+    runs-on: ubuntu-latest
+    if: >
+      !failure() &&
+      !cancelled() &&
+      inputs.fastify-dependency-integration == true
+    permissions:
+      contents: read
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Install dependencies
+        run: pnpm i --ignore-scripts
+
+      - name: Test Fastify Integration
+        run: |
+          pnpm link &&
+          PACKAGE_NAME=$(node -p "require('./package.json').name")
+          git clone https://github.com/fastify/fastify.git --depth 1 &&
+          cd fastify &&
+          pnpm i --ignore-scripts &&
+          pnpm link $PACKAGE_NAME &&
+          pnpm run unit
