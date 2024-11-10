@@ -16,12 +16,16 @@ on:
       - "*.md"
 
 jobs:
+  setup_pnpm:
+    steps:
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
   test:
+    needs: [setup_pnpm]
     uses: fastify/workflows/.github/workflows/plugins-ci.yml@v5
     with:
       license-check: true
       lint: true
-    steps:
-      uses: pnpm/action-setup@v4
-      with:
-        version: 9
