@@ -17,11 +17,11 @@ on:
 
 jobs:
   test:
+    uses: fastify/workflows/.github/workflows/plugins-ci.yml@v5
+    with:
+      license-check: true
+      lint: true
     steps:
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 9
-      - uses: fastify/workflows/.github/workflows/plugins-ci.yml@v5
-        with:
-          license-check: true
-          lint: true
+      uses: pnpm/action-setup@v4
+      with:
+        version: 9
