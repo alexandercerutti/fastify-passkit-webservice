@@ -27,3 +27,36 @@ $ npm install fastify-passkit-webservice
 All the details are available in the dedicated project [wiki page](https://github.com/alexandercerutti/fastify-passkit-webservice/wiki/API-Documentation-Reference).
 
 ---
+
+### Usage example
+
+All the exposed middlewares work like this:
+
+```js
+import Fastify from "fastify";
+
+const app = Fastify();
+
+app.register(import("../lib/plugins/v1/registration.js"), {
+	async onRegister(
+		deviceLibraryIdentifier,
+		passTypeIdentifier,
+		serialNumber,
+		pushToken,
+	) {
+		/** your implementation */
+	},
+	async onUnregister(
+		deviceLibraryIdentifier,
+		passTypeIdentifier,
+		serialNumber,
+	) {
+		/** your implementation */
+	},
+	async tokenVerifier(token) {
+		/** your implementation */
+	},
+});
+```
+
+Give a look at `specs/server.mjs` for fully example.
